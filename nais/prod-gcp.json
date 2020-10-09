@@ -23,7 +23,7 @@
     "k9-ettersending-mottak",
     "k9-ettersending-prosessering",
     "omsorgspengerutbetalingsoknad-arbeidstaker-mottak",
-    "omsorgspengerutbetalingsoknad-arbeidstaker-prosessering",
+    "omsorgspengerutbetalingsoknad-arbeidstaker-prosessering"
   ],
   "bucketName": "k9-mellomlagring",
   "env": {
