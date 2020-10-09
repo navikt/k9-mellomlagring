@@ -11,6 +11,7 @@
   "azureTenant": "trygdeetaten.no",
   "preauthorizedApps": [
     "omsorgspenger-midlertidig-alene-api",
+    "omsorgspenger-midlertidig-alene-prosessering",
     "pleiepenger-joark",
     "pleiepengesoknad-mottak",
     "pleiepengesoknad-prosessering",
