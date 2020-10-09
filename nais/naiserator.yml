@@ -47,7 +47,7 @@ spec:
     inbound:
       rules:
     {{ #each preauthorizedApps as |app|}}
-        - {{app}}
+        - application: {{app}}
       {{/each}}
     outbound:
       external:
