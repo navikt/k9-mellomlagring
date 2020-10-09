@@ -43,6 +43,11 @@ spec:
     buckets:
       - name: {{bucketName}}
   accessPolicy:
+    inbound:
+      rules:
+    {{ #each preauthorizedApps as |app|}}
+        - {{app}}
+      {{/each}}
     outbound:
       external:
         - host: login.microsoftonline.com

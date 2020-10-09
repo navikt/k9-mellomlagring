@@ -8,6 +8,23 @@
   "ingresses": [
     "https://k9-mellomlagring.nav.no"
   ],
+  "preauthorizedApps": [
+    "pleiepenger-joark",
+    "pleiepengesoknad-mottak",
+    "pleiepengesoknad-prosessering",
+    "omsorgspenger-mottak",
+    "omsorgspengesoknad-prosessering",
+    "omsorgspengerutbetalingsoknad-mottak",
+    "omsorgspengerutbetalingsoknad-prosessering",
+    "omsorgsdageroverforingsoknad-mottak",
+    "omsorgsdageroverforingsoknad-prosessering",
+    "frisinn-mottak",
+    "frisinn-prosessering",
+    "k9-ettersending-mottak",
+    "k9-ettersending-prosessering",
+    "omsorgspengerutbetalingsoknad-arbeidstaker-mottak",
+    "omsorgspengerutbetalingsoknad-arbeidstaker-prosessering",
+  ],
   "bucketName": "k9-mellomlagring",
   "env": {
     "LOGIN_SERVICE_V1_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten",
