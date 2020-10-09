@@ -46,7 +46,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-    {{ #each preauthorizedApps as |app|}}
+    {{#each preauthorizedApps as |app|}}
         - application: {{app}}
       {{/each}}
     outbound:
