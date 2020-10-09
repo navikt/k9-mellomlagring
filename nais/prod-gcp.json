@@ -8,6 +8,7 @@
   "ingresses": [
     "https://k9-mellomlagring.nav.no"
   ],
+  "azureTenant": "nav.no",
   "preauthorizedApps": [
     "pleiepenger-joark",
     "pleiepengesoknad-mottak",

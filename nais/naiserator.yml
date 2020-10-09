@@ -39,6 +39,7 @@ spec:
   azure:
     application:
       enabled: true
+      tenant: {{azureTenant}}
   gcp:
     buckets:
       - name: {{bucketName}}
