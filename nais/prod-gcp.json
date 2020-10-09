@@ -10,6 +10,7 @@
   ],
   "azureTenant": "nav.no",
   "preauthorizedApps": [
+    "omsorgspenger-midlertidig-alene-api",
     "pleiepenger-joark",
     "pleiepengesoknad-mottak",
     "pleiepengesoknad-prosessering",
