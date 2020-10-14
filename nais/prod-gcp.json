@@ -12,11 +12,13 @@
   "preauthorizedApps": [
     {
       "name": "omsorgspenger-midlertidig-alene-prosessering",
-      "namespace": "dusseldorf"
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
     },
     {
       "name": "k9-joark",
-      "namespace": "default"
+      "namespace": "default",
+      "cluster": "dev-fss"
     }
   ],
   "bucketName": "k9-mellomlagring",

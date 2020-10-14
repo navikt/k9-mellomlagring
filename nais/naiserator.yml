@@ -49,6 +49,7 @@ spec:
     {{#each preauthorizedApps as |app|}}
         - application: {{app.name}}
           namespace: {{app.namespace}}
+          cluster: {{app.cluster}}
       {{/each}}
     outbound:
       external:
