@@ -66,7 +66,7 @@ internal data class Configuration(private val config: ApplicationConfig) {
     val gcpBucket = config.getOptionalString(key = "nav.storage.gcp_bucket.bucket", secret = false)
     val gcsClientServiceEndpoint =
         config.getOptionalString(key = "nav.storage.gcp_bucket.service_endpoint", secret = false)
-    val localOrTest = when (config.getRequiredString("nav.local_or_test", secret = false)) {
+    val localOrTest = when (config.getOptionalString("nav.local_or_test", secret = false)) {
         "false" -> false
         "true" -> true
         else -> false
