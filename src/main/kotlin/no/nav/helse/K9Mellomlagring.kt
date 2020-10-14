@@ -28,7 +28,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import no.nav.helse.dusseldorf.ktor.health.Result
 
-fun main(args: Array<String>): Unit  = io.ktor.server.netty.EngineMain.main(args)
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
 fun Application.k9Mellomlagring() {
@@ -69,7 +69,7 @@ fun Application.k9Mellomlagring() {
     )
 
     val eierResolver = EierResolver(
-        hentEierFra = configuration.hentEierFra()
+        issuers = configuration.issuers()
     )
 
     val contentTypeService = ContentTypeService()
@@ -124,7 +124,7 @@ fun Application.k9Mellomlagring() {
 }
 
 @KtorExperimentalAPI
-private fun getVirusScanner(config: Configuration) : VirusScanner? {
+private fun getVirusScanner(config: Configuration): VirusScanner? {
     if (!config.enableVirusScan()) return null
     return VirusScanner(url = config.getVirusScanUrl())
 }

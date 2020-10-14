@@ -5,6 +5,7 @@ import io.ktor.config.*
 import io.ktor.util.*
 import no.nav.helse.dokument.eier.HentEierFra
 import no.nav.helse.dokument.storage.GcpStorageBucket
+import no.nav.helse.dokument.storage.InMemoryStorage
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dusseldorf.ktor.auth.*
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
@@ -56,14 +57,11 @@ internal data class Configuration(private val config: ApplicationConfig) {
     }
 
     // Auth
-    private fun isLoginServiceV1Configured() = issuers.filterKeys { LOGIN_SERVICE_V1_ALIAS == it.alias() }.isNotEmpty()
+
     internal fun issuers(): Map<Issuer, Set<ClaimRule>> {
         if (issuers.isEmpty()) throw IllegalStateException("Må konfigureres minst en issuer.")
         return issuers
     }
-
-    internal fun hentEierFra() =
-        if (isLoginServiceV1Configured()) HentEierFra.ACCESS_TOKEN_SUB_CLAIM else HentEierFra.QUERY_PARAMETER_EIER
 
     val gcpBucket = config.getOptionalString(key = "nav.storage.gcp_bucket.bucket", secret = false)
     val gcsClientServiceEndpoint = config.getOptionalString(key = "nav.storage.gcp_bucket.service_endpoint", secret = false)
