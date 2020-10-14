@@ -10,22 +10,14 @@
   ],
   "azureTenant": "trygdeetaten.no",
   "preauthorizedApps": [
-    "omsorgspenger-midlertidig-alene-prosessering",
-    "k9-joark",
-    "pleiepengesoknad-mottak",
-    "pleiepengesoknad-prosessering",
-    "omsorgspenger-mottak",
-    "omsorgspengesoknad-prosessering",
-    "omsorgspengerutbetalingsoknad-mottak",
-    "omsorgspengerutbetalingsoknad-prosessering",
-    "omsorgsdageroverforingsoknad-mottak",
-    "omsorgsdageroverforingsoknad-prosessering",
-    "frisinn-mottak",
-    "frisinn-prosessering",
-    "k9-ettersending-mottak",
-    "k9-ettersending-prosessering",
-    "omsorgspengerutbetalingsoknad-arbeidstaker-mottak",
-    "omsorgspengerutbetalingsoknad-arbeidstaker-prosessering"
+    {
+      "name": "omsorgspenger-midlertidig-alene-prosessering",
+      "namespace": "dusseldorf"
+    },
+    {
+      "name": "k9-joark",
+      "namespace": "default"
+    }
   ],
   "bucketName": "k9-mellomlagring",
   "env": {
