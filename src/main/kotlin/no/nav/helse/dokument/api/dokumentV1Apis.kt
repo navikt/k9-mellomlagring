@@ -7,16 +7,13 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLBuilder
-import io.ktor.http.content.MultiPartData
-import io.ktor.http.content.PartData
-import io.ktor.http.content.readAllParts
-import io.ktor.http.content.streamProvider
 import io.ktor.request.*
 import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.response.respondBytes
 import io.ktor.routing.*
 import no.nav.helse.dokument.Dokument
+import no.nav.helse.dokument.DokumentEier
 import no.nav.helse.dokument.DokumentId
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver
@@ -30,6 +27,7 @@ private const val MAX_DOKUMENT_SIZE = 8 * 1024 * 1024
 
 private const val CONTENT_PART_NAME = "content"
 private const val TITLE_PART_NAME = "title"
+private const val EIER_PART_NAME = "eier"
 
 internal fun Route.dokumentV1Apis(
     dokumentService: DokumentService,
@@ -41,7 +39,7 @@ internal fun Route.dokumentV1Apis(
     post(BASE_PATH) {
         logger.info("Lagrer dokument")
         logger.trace("Henter dokument fra requesten")
-        val dokument = call.hentDokumentFraRequest()
+        val dokument: DokumentDto = call.hentDokumentFraRequest()
         val violations = valider(contentTypeService = contentTypeService, dokument = dokument)
         if (violations.isNotEmpty()) {
             throw Throwblem(ValidationProblemDetails(violations))
@@ -50,7 +48,7 @@ internal fun Route.dokumentV1Apis(
         logger.trace("Dokument hetent fra reqeusten, forsøker å lagre")
         val dokumentId = dokumentService.lagreDokument(
             dokument = dokument.tilDokument(),
-            eier = eierResolver.hentEier(call)
+            eier = eierResolver.hentEier(call, dokument.eier!!.eiersFødselsnummer)
         )
         logger.trace("Dokument lagret.")
         logger.info("$dokumentId")
@@ -60,6 +58,7 @@ internal fun Route.dokumentV1Apis(
 
     get("$BASE_PATH/{dokumentId}") {
         val dokumentId = call.dokumentId()
+        val dokumentEier = call.dokumentEier()
         val etterspurtJson = call.request.etterspurtJson()
         logger.info("Henter dokument")
         logger.info("$dokumentId")
@@ -68,7 +67,7 @@ internal fun Route.dokumentV1Apis(
 
         val dokument = dokumentService.hentDokument(
             dokumentId = call.dokumentId(),
-            eier = eierResolver.hentEier(call)
+            eier = eierResolver.hentEier(call, dokumentEier.eiersFødselsnummer)
         )
 
         logger.trace("FantDokment=${dokument != null}")
@@ -86,12 +85,13 @@ internal fun Route.dokumentV1Apis(
 
     delete("$BASE_PATH/{dokumentId}") {
         val dokumentId = call.dokumentId()
+        val dokumentEier = call.dokumentEier()
         logger.info("Sletter dokument")
         logger.info("$dokumentId")
 
         val result = dokumentService.slettDokument(
             dokumentId = dokumentId,
-            eier = eierResolver.hentEier(call)
+            eier = eierResolver.hentEier(call, dokumentEier.eiersFødselsnummer)
         )
 
         when {
@@ -104,52 +104,39 @@ internal fun Route.dokumentV1Apis(
 private fun valider(
     contentTypeService: ContentTypeService,
     dokument: DokumentDto
-) : Set<Violation> {
+): Set<Violation> {
     logger.trace("Validerer dokumentet")
     val violations = dokument.valider()
     if (!contentTypeService.isSupported(contentType = dokument.contentType!!, content = dokument.content!!)) {
-        violations.add(Violation(parameterName = HttpHeaders.ContentType, reason = "Ikke Supportert dokument med Content-Type ${dokument.contentType}", parameterType = ParameterType.HEADER))
+        violations.add(
+            Violation(
+                parameterName = HttpHeaders.ContentType,
+                reason = "Ikke Supportert dokument med Content-Type ${dokument.contentType}",
+                parameterType = ParameterType.HEADER
+            )
+        )
     }
     return violations.toSet()
 }
 
 private suspend fun ApplicationCall.hentDokumentFraRequest(): DokumentDto {
-    return if (request.isMultipart()) {
-        logger.trace("Behandler multipart request")
-        receiveMultipart().getDokumentDto()
-    } else  {
-        logger.trace("Behandler json request")
-        receive()
-    }
+    logger.trace("Behandler json request")
+    return receive()
 }
 
-private fun ApplicationCall.dokumentId() : DokumentId {
+private fun ApplicationCall.dokumentId(): DokumentId {
     return DokumentId(parameters["dokumentId"]!!)
 }
 
-internal fun ApplicationRequest.etterspurtJson() : Boolean {
+suspend fun ApplicationCall.dokumentEier(): DokumentEier {
+    return receive()
+}
+
+internal fun ApplicationRequest.etterspurtJson(): Boolean {
     return ContentType.Application.Json.toString() == accept()
 }
 
-private suspend fun MultiPartData.getDokumentDto() : DokumentDto {
-    var content : ByteArray? = null
-    var contentType : String? = null
-    var title : String? = null
-
-    for (partData in readAllParts()) {
-        if (partData is PartData.FileItem && CONTENT_PART_NAME == partData.name) {
-            content = partData.streamProvider().use { it.readBytes() }
-            contentType = partData.contentType.toString()
-        } else if (partData is PartData.FormItem && TITLE_PART_NAME == partData.name) {
-            title = partData.value
-        }
-        partData.dispose()
-    }
-
-    return DokumentDto(content, contentType, title)
-}
-
-private suspend fun ApplicationCall.respondDokumentNotFound(dokumentId : DokumentId) {
+private suspend fun ApplicationCall.respondDokumentNotFound(dokumentId: DokumentId) {
 
     val problemDetails = DefaultProblemDetails(
         status = 404,
@@ -159,26 +146,71 @@ private suspend fun ApplicationCall.respondDokumentNotFound(dokumentId : Dokumen
     respond(HttpStatusCode.NotFound, problemDetails)
 }
 
-private suspend fun ApplicationCall.respondCreatedDokument(baseUrl : String, dokumentId: DokumentId) {
-    val url = URLBuilder(baseUrl).path(BASE_PATH,dokumentId.id).build().toString()
+private suspend fun ApplicationCall.respondCreatedDokument(baseUrl: String, dokumentId: DokumentId) {
+    val url = URLBuilder(baseUrl).path(BASE_PATH, dokumentId.id).build().toString()
     response.header(HttpHeaders.Location, url)
     respond(HttpStatusCode.Created, mapOf(Pair("id", dokumentId.id)))
 }
 
-internal data class DokumentDto(val content: ByteArray?, @JsonAlias("contentType") val contentType: String?, val title : String?) {
-    fun valider() : MutableList<Violation> {
+internal data class DokumentDto(
+    val content: ByteArray?,
+    @JsonAlias("contentType") val contentType: String?,
+    val title: String?,
+    val eier: DokumentEier?
+) {
+    fun valider(): MutableList<Violation> {
         val violations = mutableListOf<Violation>()
-        if (content == null) violations.add(Violation(parameterName = CONTENT_PART_NAME, reason = "Fant ingen 'part' som er en fil.", parameterType = ParameterType.ENTITY))
-        if (content != null && content.size > MAX_DOKUMENT_SIZE) violations.add(Violation(parameterName = CONTENT_PART_NAME, reason = "Dokumentet er større en maks tillat 8MB.", parameterType = ParameterType.ENTITY))
-        if (contentType == null) violations.add(Violation(parameterName = HttpHeaders.ContentType, reason = "Ingen Content-Type satt på fil.", parameterType = ParameterType.ENTITY))
-        if (title == null) violations.add(Violation(parameterName = TITLE_PART_NAME, reason = "Fant ingen 'part' som er en form item.", parameterType = ParameterType.ENTITY))
+        if (content == null) violations.add(
+            Violation(
+                parameterName = CONTENT_PART_NAME,
+                reason = "Fant ingen 'part' som er en fil.",
+                parameterType = ParameterType.ENTITY
+            )
+        )
+        if (content != null && content.size > MAX_DOKUMENT_SIZE) violations.add(
+            Violation(
+                parameterName = CONTENT_PART_NAME,
+                reason = "Dokumentet er større en maks tillat 8MB.",
+                parameterType = ParameterType.ENTITY
+            )
+        )
+        if (contentType == null) violations.add(
+            Violation(
+                parameterName = HttpHeaders.ContentType,
+                reason = "Ingen Content-Type satt på fil.",
+                parameterType = ParameterType.ENTITY
+            )
+        )
+        if (title == null) violations.add(
+            Violation(
+                parameterName = TITLE_PART_NAME,
+                reason = "Fant ingen 'part' som er en form item.",
+                parameterType = ParameterType.ENTITY
+            )
+        )
+        if (eier == null) violations.add(
+            Violation(
+                parameterName = EIER_PART_NAME,
+                reason = "Fant ingen 'part' som er en form item.",
+                parameterType = ParameterType.ENTITY
+            )
+        )
+        if (eier != null && eier.eiersFødselsnummer.isBlank()) violations.add(
+            Violation(
+                parameterName = EIER_PART_NAME,
+                reason = "Fant ingen 'part' som er en form item.",
+                parameterType = ParameterType.ENTITY
+            )
+        )
         return violations
     }
-    fun tilDokument() : Dokument {
+
+    fun tilDokument(): Dokument {
         return Dokument(
             content = content!!,
             contentType = contentType!!,
-            title = title!!
+            title = title!!,
+            eier = eier!!
         )
     }
 }

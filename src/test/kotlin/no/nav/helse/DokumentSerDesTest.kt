@@ -1,6 +1,7 @@
 package no.nav.helse
 
 import no.nav.helse.dokument.Dokument
+import no.nav.helse.dokument.DokumentEier
 import no.nav.helse.dokument.DokumentSerDes
 import org.skyscreamer.jsonassert.JSONAssert
 import java.util.*
@@ -19,7 +20,8 @@ class DokumentSerDesTest {
         val dokument = Dokument(
             title = "Dette er en tittel",
             content = contentByteArray,
-            contentType = "application/json"
+            contentType = "application/json",
+            eier = DokumentEier("12345678910")
         )
 
         val serialized = DokumentSerDes.serialize(dokument)
@@ -27,7 +29,10 @@ class DokumentSerDesTest {
             {
                 "title": "Dette er en tittel",
                 "content": "$contentBase64Encoded",
-                "content_type": "application/json"
+                "content_type": "application/json",
+                "eier": {
+                    "eiers_fødselsnummer": "12345678910"
+                }
             }
         """.trimIndent(), serialized, true)
 

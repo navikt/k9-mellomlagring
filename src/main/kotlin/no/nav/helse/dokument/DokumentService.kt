@@ -175,6 +175,7 @@ data class DokumentId(val id: String)
 
 data class Dokument(
     val title: String,
+    val eier: DokumentEier,
     val content: ByteArray,
     @JsonAlias("contentType") val contentType: String
 ) {
@@ -185,6 +186,7 @@ data class Dokument(
         other as Dokument
 
         if (title != other.title) return false
+        if (eier != other.eier) return false
         if (!content.contentEquals(other.content)) return false
         if (contentType != other.contentType) return false
 
@@ -195,6 +197,11 @@ data class Dokument(
         var result = title.hashCode()
         result = 31 * result + content.contentHashCode()
         result = 31 * result + contentType.hashCode()
+        result = 31 * result + eier.hashCode()
         return result
     }
 }
+
+data class DokumentEier(
+    val eiersFødselsnummer: String
+)

@@ -48,7 +48,7 @@ internal fun Route.customIdV1Apis(
                 dokumentService.lagreDokument(
                     customDokumentId = customDokumentId,
                     dokument = dokument,
-                    eier = eierResolver.hentEier(call),
+                    eier = eierResolver.hentEier(call, dokument.eier.eiersFødselsnummer),
                     expires = expires
                 )
                 call.respond(HttpStatusCode.NoContent)
@@ -63,9 +63,11 @@ internal fun Route.customIdV1Apis(
         val customDokumentId = call.customDokumentId()
         logger.info("Henter dokument for CustomDokumentId=${customDokumentId.id}")
 
+        val dokumentEier = call.dokumentEier()
+
         val dokument = dokumentService.hentDokument(
             customDokumentId = customDokumentId,
-            eier = eierResolver.hentEier(call)
+            eier = eierResolver.hentEier(call, dokumentEier.eiersFødselsnummer)
         )
 
         when {

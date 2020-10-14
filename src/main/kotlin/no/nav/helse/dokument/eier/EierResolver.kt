@@ -4,6 +4,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.auth.*
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.request.*
+import no.nav.helse.dokument.DokumentEier
 import no.nav.helse.dusseldorf.ktor.auth.ClaimRule
 import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import org.slf4j.Logger
@@ -21,28 +22,26 @@ internal class EierResolver(
     private val loginServiceV1Issuer =
         issuers.filterKeys { it.alias() == "login-service-v1" }.entries.first().key.issuer()
 
-    internal suspend fun hentEier(call: ApplicationCall): Eier {
+    internal suspend fun hentEier(call: ApplicationCall, eiersFødselsnummer: String): Eier {
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
         return when (val issuer = principal.payload.issuer) {
             azureV1Issuer, azureV2Issuer -> hentEierFraEntity(call)
-            loginServiceV1Issuer -> hentEierFraClaim(principal)
+            loginServiceV1Issuer -> hentEierFraClaim(principal, eiersFødselsnummer)
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
     }
 
-    private fun hentEierFraClaim(principal: JWTPrincipal): Eier {
+    private fun hentEierFraClaim(principal: JWTPrincipal, eiersFødselsnummer: String): Eier {
         logger.trace("Forsøker å hente eier fra JWT token 'sub' claim")
-        return Eier(principal.payload.subject)
+        val subject = principal.payload.subject
+        if (subject != eiersFødselsnummer) throw IllegalArgumentException("Eiers token samsvarer ikke med forespurt eier.")
+        return Eier(subject)
     }
 
     private suspend fun hentEierFraEntity(call: ApplicationCall): Eier {
         logger.trace("Ser om det er en entity parameter 'eier' som skal brukes")
         val dokumentEier: DokumentEier = call.receive()
-        return Eier(dokumentEier.identitetsnummer)
+        return Eier(dokumentEier.eiersFødselsnummer)
     }
 }
-
-data class DokumentEier(
-    val identitetsnummer: String
-)

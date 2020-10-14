@@ -36,17 +36,20 @@ class DokumentServiceTest {
         val dokument1 = Dokument(
             title = "Tittel1",
             content = byteArrayOf(1,2,3,4),
-            contentType = "application/pdf"
+            contentType = "application/pdf",
+            eier = DokumentEier("12345678910")
         )
         val dokument2 = Dokument(
             title = "Tittel2",
             content = byteArrayOf(5,6,7,8),
-            contentType = "image/png"
+            contentType = "image/png",
+            eier = DokumentEier("12345678910")
         )
         val dokument3 = Dokument(
             title = "Tittel3",
             content = byteArrayOf(9,10,11,12),
-            contentType = "image/jpeg"
+            contentType = "image/jpeg",
+            eier = DokumentEier("12345678910")
         )
 
 
