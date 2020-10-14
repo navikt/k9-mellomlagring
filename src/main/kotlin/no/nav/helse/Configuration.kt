@@ -64,13 +64,22 @@ internal data class Configuration(private val config: ApplicationConfig) {
     }
 
     val gcpBucket = config.getOptionalString(key = "nav.storage.gcp_bucket.bucket", secret = false)
-    val gcsClientServiceEndpoint = config.getOptionalString(key = "nav.storage.gcp_bucket.service_endpoint", secret = false)
+    val gcsClientServiceEndpoint =
+        config.getOptionalString(key = "nav.storage.gcp_bucket.service_endpoint", secret = false)
+    val localOrTest = when (config.getRequiredString("nav.local_or_test", secret = false)) {
+        "false" -> false
+        "true" -> true
+        else -> false
+    }
 
     val gcsConfigured = gcpBucket != null
 
     internal fun getStorageConfigured(): Storage {
 
         when {
+            localOrTest -> {
+                return InMemoryStorage()
+            }
             gcsConfigured -> {
                 return GcpStorageBucket(
                     gcpStorage = getGcpStorageConfigured(),
@@ -78,7 +87,7 @@ internal data class Configuration(private val config: ApplicationConfig) {
                 )
             }
             else -> {
-                throw IllegalStateException("Ingen storage er konfigurert. Konfigurer enten S3 eller GCS bucket.")
+                throw IllegalStateException("Ingen storage er konfigurert. Konfigurer enten InMemoryStorage eller GCS bucket.")
             }
         }
     }

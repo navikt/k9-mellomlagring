@@ -22,15 +22,9 @@ class K9MellomlagringWithMocks {
                 .build()
                 .stubVirusScan()
 
-            // Om true startes server kun med loginservice og 1 dag expiry på S3 bucket
-            // Om false startes sever med azure & nais sts og uten expiry på S3 bucket
-            val sluttBruker = true
-
             val testArgs = TestConfiguration.asMap(
                 wireMockServer = wireMockServer,
-                port = 8132,
-                konfigurerLoginService = sluttBruker,
-                konfigurerAzure = !sluttBruker
+                port = 8132
             ).asArguments()
 
             Runtime.getRuntime().addShutdownHook(object : Thread() {
