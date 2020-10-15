@@ -1,5 +1,6 @@
 package no.nav.helse.dokument.storage
 
+import com.google.cloud.storage.Blob
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageException
@@ -69,6 +70,28 @@ class GcpStorageBucket(
             .build()
 
         lagre(blobInfo, value)
+    }
+
+    /**
+     * Setter metadata for eksisterende objekt.
+     *
+     * @param key Den unike identifikatoren til objektet.
+     * @param metadata metadata å sette på objektet. Dette vil slette eksisterende metadata dersom det allerede eksisterer.
+     * @return Returnerer true, dersom objektet blir funnet og oppdatert med ny metadata. False dersom den ikke blir funnet, eller feiler.
+     */
+    override fun setMetadata(key: StorageKey, metadata: Map<String, String>): Boolean {
+        if (hent(key) == null) return false
+
+        return try {
+            gcpStorage.get(bucketName, key.value)
+                .toBuilder()
+                .setMetadata(metadata)
+                .build()
+                .update() != null
+        } catch (ex: StorageException) {
+            logger.error("Feilet med å sette metadata på objekt med id: ${key.value}", ex)
+            return false
+        }
     }
 
     private fun lagre(blobInfo: BlobInfo, value: StorageValue) {

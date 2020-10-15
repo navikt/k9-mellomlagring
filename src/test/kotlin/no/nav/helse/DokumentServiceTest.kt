@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.dokument.*
 import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.eier.Eier
+import no.nav.helse.dokument.storage.InMemoryStorage
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dokument.storage.StorageKey
 import no.nav.helse.dokument.storage.StorageValue
@@ -59,29 +60,29 @@ class DokumentServiceTest {
 
 
         val dokumentService1 = DokumentService(
-            storage = storage,
             cryptography = Cryptography(
                 encryptionPassphrase = passord1,
                 decryptionPassphrases = mapOf(passord1)
             ),
+            storage = storage,
             virusScanner = virusScannerMock
         )
 
         val dokumentService2 = DokumentService(
-            storage = storage,
             cryptography = Cryptography(
                 encryptionPassphrase = passord2,
                 decryptionPassphrases = mapOf(passord1, passord2)
             ),
+            storage = storage,
             virusScanner = virusScannerMock
         )
 
         val dokumentService3 = DokumentService(
-            storage = storage,
             cryptography = Cryptography(
                 encryptionPassphrase = passord3,
                 decryptionPassphrases = mapOf(passord1, passord2, passord3)
             ),
+            storage = storage,
             virusScanner = virusScannerMock
         )
 
@@ -139,29 +140,6 @@ class DokumentServiceTest {
                 logger.error("Feil ved henting", cause)
             }
             assertFalse(expectOk) // Om det oppstår en exception må expectOk == false
-        }
-    }
-
-    private class InMemoryStorage : Storage {
-        override fun ready() {}
-
-        private val storage = mutableMapOf<StorageKey, StorageValue>()
-
-        override fun slett(storageKey: StorageKey) : Boolean {
-            val value = storage.remove(storageKey)
-            return value != null
-        }
-
-        override fun lagre(key: StorageKey, value: StorageValue) {
-            storage[key] = value
-        }
-
-        override fun lagre(key: StorageKey, value: StorageValue, expires: ZonedDateTime) {
-            lagre(key, value)
-        }
-
-        override fun hent(key: StorageKey): StorageValue? {
-            return storage[key]
         }
     }
 }

@@ -81,7 +81,8 @@ fun Application.k9Mellomlagring() {
                     dokumentService = dokumentService,
                     eierResolver = eierResolver,
                     contentTypeService = contentTypeService,
-                    baseUrl = configuration.getBaseUrl()
+                    baseUrl = configuration.getBaseUrl(),
+                    issuers = issuers
                 )
                 customIdV1Apis(
                     dokumentService = dokumentService,

@@ -7,6 +7,8 @@ import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dokument.storage.StorageKey
 import no.nav.helse.dokument.storage.StorageValue
+import no.nav.helse.dusseldorf.ktor.auth.ClaimRule
+import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -26,7 +28,7 @@ data class DokumentService(
     internal fun hentDokument(
         customDokumentId: CustomDokumentId,
         eier: Eier
-    ) : Dokument? {
+    ): Dokument? {
         // TODO: Støtter ikke rullerende secrets -> https://github.com/navikt/k9-mellomlagring/issues/24
         logger.info("Henter dokument for CustomDokumentId ${customDokumentId.id}")
         val dokumentId = generateDokumentId(customDokumentId)
@@ -50,7 +52,8 @@ data class DokumentService(
         customDokumentId: CustomDokumentId,
         dokument: Dokument,
         eier: Eier,
-        expires: ZonedDateTime?) {
+        expires: ZonedDateTime?
+    ) {
         virusScanner?.scan(dokument)
 
         val dokumentId = generateDokumentId(customDokumentId)
@@ -78,14 +81,14 @@ data class DokumentService(
     fun hentDokument(
         dokumentId: DokumentId,
         eier: Eier
-    ) : Dokument? {
+    ): Dokument? {
         logger.trace("Henter dokument $dokumentId.")
         val value = storage.hent(
             generateStorageKey(
                 dokumentId = dokumentId,
                 eier = eier
             )
-        )?: return null
+        ) ?: return null
 
         logger.trace("Fant dokument, dekrypterer.")
 
@@ -103,7 +106,7 @@ data class DokumentService(
     fun slettDokument(
         dokumentId: DokumentId,
         eier: Eier
-    ) : Boolean {
+    ): Boolean {
         logger.trace("Sletter dokument $dokumentId")
         val result = storage.slett(
             generateStorageKey(
@@ -115,10 +118,21 @@ data class DokumentService(
         return result
     }
 
+    fun setMetadata(
+        dokumentId: DokumentId,
+        eier: Eier,
+        metadata: Map<String, String> = mapOf()
+    ): Boolean {
+        logger.info("Setter metadata på dokument med id: {}", dokumentId)
+        val key = generateStorageKey(dokumentId, eier)
+        return storage.setMetadata(key, metadata)
+    }
+
     suspend fun lagreDokument(
         dokument: Dokument,
-        eier: Eier
-    ) : DokumentId {
+        eier: Eier,
+        expires: ZonedDateTime? = null
+    ): DokumentId {
         virusScanner?.scan(dokument)
 
         logger.trace("Generer DokumentID")
@@ -133,15 +147,28 @@ data class DokumentService(
 
         logger.trace("Larer dokument.")
 
-        storage.lagre(
-            key = generateStorageKey(
-                dokumentId = dokumentId,
-                eier = eier
-            ),
-            value = StorageValue(
-                value = encrypted
+        if (expires == null) {
+            storage.lagre(
+                key = generateStorageKey(
+                    dokumentId = dokumentId,
+                    eier = eier
+                ),
+                value = StorageValue(
+                    value = encrypted
+                )
             )
-        )
+        } else {
+            storage.lagre(
+                key = generateStorageKey(
+                    dokumentId = dokumentId,
+                    eier = eier
+                ),
+                value = StorageValue(
+                    value = encrypted
+                ),
+                expires = expires
+            )
+        }
 
         logger.trace("Lagring OK.")
 
@@ -151,7 +178,7 @@ data class DokumentService(
     private fun generateStorageKey(
         dokumentId: DokumentId,
         eier: Eier
-    ) : StorageKey {
+    ): StorageKey {
         logger.trace("Genrerer Storage Key for $dokumentId. Krypterer.")
         val plainText = "${eier.id}-${dokumentId.id}"
         val encrypted = cryptography.encrypt(
@@ -167,8 +194,9 @@ data class DokumentService(
         return storageKey
     }
 
-    private fun generateDokumentId() : DokumentId = DokumentId(id = cryptography.id())
-    private fun generateDokumentId(customDokumentId: CustomDokumentId) = DokumentId(id = cryptography.id(id = customDokumentId.id))
+    private fun generateDokumentId(): DokumentId = DokumentId(id = cryptography.id())
+    private fun generateDokumentId(customDokumentId: CustomDokumentId) =
+        DokumentId(id = cryptography.id(id = customDokumentId.id))
 }
 
 data class DokumentId(val id: String)

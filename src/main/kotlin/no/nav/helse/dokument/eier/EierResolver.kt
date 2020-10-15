@@ -1,10 +1,6 @@
 package no.nav.helse.dokument.eier
 
-import io.ktor.application.ApplicationCall
-import io.ktor.auth.*
 import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.request.*
-import no.nav.helse.dokument.DokumentEier
 import no.nav.helse.dusseldorf.ktor.auth.ClaimRule
 import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import org.slf4j.Logger
@@ -22,9 +18,7 @@ internal class EierResolver(
     private val loginServiceV1Issuer =
         issuers.filterKeys { it.alias() == "login-service-v1" }.entries.first().key.issuer()
 
-    internal suspend fun hentEier(call: ApplicationCall, eiersFødselsnummer: String): Eier {
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
-
+    internal fun hentEier(principal: JWTPrincipal, eiersFødselsnummer: String): Eier {
         return when (val issuer = principal.payload.issuer) {
             azureV1Issuer, azureV2Issuer -> Eier(eiersFødselsnummer)
             loginServiceV1Issuer -> hentEierFraClaim(principal, eiersFødselsnummer)
