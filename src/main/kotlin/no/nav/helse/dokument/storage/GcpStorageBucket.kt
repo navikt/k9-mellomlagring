@@ -10,6 +10,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 
 
@@ -81,7 +82,7 @@ class GcpStorageBucket(
         val blobId = BlobId.of(bucketName, key.value)
         val blobInfo = BlobInfo.newBuilder(blobId)
             .setContentType("text/plain")
-            .setCustomTime(ZonedDateTime.now().toInstant().toEpochMilli())
+            .setCustomTime(ZonedDateTime.now(UTC).toInstant().toEpochMilli())
             .setMetadata(
                 mapOf(
                     "contentType" to "text/plain",
