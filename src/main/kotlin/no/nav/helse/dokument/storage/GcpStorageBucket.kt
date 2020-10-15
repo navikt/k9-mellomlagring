@@ -59,7 +59,7 @@ class GcpStorageBucket(
 
     override fun lagre(key: StorageKey, value: StorageValue, expires: ZonedDateTime) {
         val blobId = BlobId.of(bucketName, key.value)
-        val blobInfo = BlobInfo.newBuilder(blobId)
+        val blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain")
             .setMetadata(
                 mapOf(
                     "contentType" to "text/plain",
