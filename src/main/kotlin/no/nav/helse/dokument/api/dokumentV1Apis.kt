@@ -72,7 +72,7 @@ internal fun Route.dokumentV1Apis(
         call.respondCreatedDokument(baseUrl, dokumentId)
     }
 
-    get("$BASE_PATH/{dokumentId}") {
+    post("$BASE_PATH/{dokumentId}") {
         logger.info("Henter dokument")
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
