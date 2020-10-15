@@ -2,13 +2,11 @@ package no.nav.helse.dokument
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import no.nav.helse.dokument.api.CustomDokumentId
-import no.nav.helse.dokument.eier.Eier
 import no.nav.helse.dokument.crypto.Cryptography
+import no.nav.helse.dokument.eier.Eier
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dokument.storage.StorageKey
 import no.nav.helse.dokument.storage.StorageValue
-import no.nav.helse.dusseldorf.ktor.auth.ClaimRule
-import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
@@ -118,14 +116,13 @@ data class DokumentService(
         return result
     }
 
-    fun setMetadata(
+    fun persister(
         dokumentId: DokumentId,
-        eier: Eier,
-        metadata: Map<String, String> = mapOf()
+        eier: Eier
     ): Boolean {
         logger.info("Setter metadata på dokument med id: {}", dokumentId)
         val key = generateStorageKey(dokumentId, eier)
-        return storage.setMetadata(key, metadata)
+        return storage.persister(key)
     }
 
     suspend fun lagreDokument(

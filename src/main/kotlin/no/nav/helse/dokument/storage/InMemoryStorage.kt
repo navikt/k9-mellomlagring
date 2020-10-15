@@ -21,11 +21,8 @@ class InMemoryStorage : Storage {
         lagre(key, value)
     }
 
-    override fun setMetadata(key: StorageKey, metadata: Map<String, String>): Boolean {
-        if (this.storage[key] == null) return false
-
-        this.metadata[key] = metadata
-        return this.metadata[key] != null
+    override fun persister(key: StorageKey): Boolean {
+        return this.storage[key] != null
     }
 
     override fun hent(key: StorageKey): StorageValue? {

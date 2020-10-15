@@ -10,6 +10,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
 
@@ -95,27 +96,28 @@ class GcpStorageBucket(
     }
 
     /**
-     * Setter metadata for eksisterende objekt.
+     * Setter metadata 'customDateTime' for eksisterende objekt.
+     * Dette kallet setter customDateTime for objektet til året 999_999_999, eller inntil den er slettet.
      *
      * @param key Den unike identifikatoren til objektet.
-     * @param metadata metadata å sette på objektet. Dette vil slette eksisterende metadata dersom det allerede eksisterer.
      * @return Returnerer true, dersom objektet blir funnet og oppdatert med ny metadata. False dersom den ikke blir funnet, eller feiler.
      */
-    override fun setMetadata(key: StorageKey, metadata: Map<String, String>): Boolean {
+    override fun persister(key: StorageKey): Boolean {
         if (hent(key) == null) return false
 
         return try {
             gcpStorage.get(bucketName, key.value)
                 .toBuilder()
-                .setCustomTime(ZonedDateTime.now(UTC).plusWeeks(2).toInstant().toEpochMilli())
-                .setMetadata(metadata)
+                .setCustomTime(LocalDateTime.MAX.toInstant(UTC).toEpochMilli())
                 .build()
                 .update() != null
         } catch (ex: StorageException) {
-            logger.error("Feilet med å sette metadata på objekt med id: ${key.value}", ex)
+            logger.error("Feilet med å persistere objekt med id: ${key.value}", ex)
             return false
         }
     }
+
+
 
     private fun lagre(blobInfo: BlobInfo, value: StorageValue) {
         val content: ByteArray = value.value.toByteArray()

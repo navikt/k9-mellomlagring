@@ -7,7 +7,7 @@ interface Storage {
     fun slett(storageKey: StorageKey) : Boolean
     fun lagre(key: StorageKey, value: StorageValue)
     fun lagre(key: StorageKey, value: StorageValue, expires: ZonedDateTime)
-    fun setMetadata(key: StorageKey, metadata: Map<String, String> = mapOf()): Boolean
+    fun persister(key: StorageKey): Boolean
     fun ready()
 }
 

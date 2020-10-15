@@ -120,13 +120,13 @@ internal fun Route.dokumentV1Apis(
         }
     }
 
-    delete("$BASE_PATH/{dokumentId}/metadata") {
+    put("$BASE_PATH/{dokumentId}/persister") {
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
-        logger.info("Sletter metadata på dokument med id: {}", dokumentId.id)
+        logger.info("Persisterer dokument med id: {}", dokumentId.id)
 
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
-        val result = dokumentService.setMetadata(
+        val result = dokumentService.persister(
             dokumentId = dokumentId,
             eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
         )
