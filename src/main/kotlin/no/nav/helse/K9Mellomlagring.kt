@@ -3,21 +3,24 @@ package no.nav.helse
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import io.ktor.application.*
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
+import io.ktor.auth.*
 import io.ktor.features.*
-import io.ktor.jackson.jackson
-import io.ktor.metrics.micrometer.MicrometerMetrics
-import io.ktor.routing.Routing
+import io.ktor.jackson.*
+import io.ktor.metrics.micrometer.*
+import io.ktor.routing.*
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
-import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.VirusScanner
-import no.nav.helse.dokument.api.*
+import no.nav.helse.dokument.api.ContentTypeService
+import no.nav.helse.dokument.api.customIdV1Apis
+import no.nav.helse.dokument.api.dokumentV1Apis
+import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.eier.EierResolver
 import no.nav.helse.dokument.storage.Storage
-import no.nav.helse.dusseldorf.ktor.auth.*
+import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
+import no.nav.helse.dusseldorf.ktor.auth.allIssuers
+import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.core.*
 import no.nav.helse.dusseldorf.ktor.health.*
 import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
@@ -26,7 +29,6 @@ import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.helse.dusseldorf.ktor.metrics.init
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import no.nav.helse.dusseldorf.ktor.health.Result
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -115,7 +117,7 @@ fun Application.k9Mellomlagring() {
     }
 
     intercept(ApplicationCallPipeline.Monitoring) {
-        call.request.log()
+        call.request.log(verbose = true)
     }
 
     install(CallLogging) {
