@@ -29,8 +29,6 @@ class GcpStorageBucket(
     fun enableLifecycleManagement() {
         val bucket: Bucket = gcpStorage.get(bucketName)
 
-        // See the LifecycleRule documentation for additional info on what you can do with lifecycle
-        // management rules. This one deletes objects that are over 100 days old.
         // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
         bucket
             .toBuilder()
@@ -44,7 +42,7 @@ class GcpStorageBucket(
             )
             .build()
             .update()
-        println("Lifecycle management was enabled and configured for bucket $bucketName")
+        logger.info("Lifecycle management aktivert og konfigurert for bucket $bucketName")
     }
 
     override fun hent(key: StorageKey): StorageValue? {
@@ -83,7 +81,7 @@ class GcpStorageBucket(
         val blobId = BlobId.of(bucketName, key.value)
         val blobInfo = BlobInfo.newBuilder(blobId)
             .setContentType("text/plain")
-            .setCustomTime(ZonedDateTime.now().toEpochSecond())
+            .setCustomTime(ZonedDateTime.now().toInstant().toEpochMilli())
             .setMetadata(
                 mapOf(
                     "contentType" to "text/plain",
