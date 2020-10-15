@@ -26,7 +26,7 @@ internal class EierResolver(
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
         return when (val issuer = principal.payload.issuer) {
-            azureV1Issuer, azureV2Issuer -> hentEierFraEntity(call)
+            azureV1Issuer, azureV2Issuer -> Eier(eiersFødselsnummer)
             loginServiceV1Issuer -> hentEierFraClaim(principal, eiersFødselsnummer)
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
@@ -37,11 +37,5 @@ internal class EierResolver(
         val subject = principal.payload.subject
         if (subject != eiersFødselsnummer) throw IllegalArgumentException("Eiers token samsvarer ikke med forespurt eier.")
         return Eier(subject)
-    }
-
-    private suspend fun hentEierFraEntity(call: ApplicationCall): Eier {
-        logger.trace("Ser om det er en entity parameter 'eier' som skal brukes")
-        val dokumentEier: DokumentEier = call.receive()
-        return Eier(dokumentEier.eiersFødselsnummer)
     }
 }
