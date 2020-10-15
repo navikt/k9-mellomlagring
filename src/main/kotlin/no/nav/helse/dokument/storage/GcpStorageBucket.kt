@@ -48,7 +48,7 @@ class GcpStorageBucket(
 
     override fun hent(key: StorageKey): StorageValue? {
         return try {
-            val blob = gcpStorage.get(BlobId.of(bucketName, key.value))
+            val blob = gcpStorage.get(BlobId.of(bucketName, key.value)) ?: return null
             val outputStream = ByteArrayOutputStream()
             blob.downloadTo(outputStream)
 

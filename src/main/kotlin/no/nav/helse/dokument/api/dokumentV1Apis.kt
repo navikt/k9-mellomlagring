@@ -1,18 +1,12 @@
 package no.nav.helse.dokument.api
 
 import com.fasterxml.jackson.annotation.JsonAlias
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
+import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.URLBuilder
+import io.ktor.http.*
 import io.ktor.request.*
-import io.ktor.response.header
-import io.ktor.response.respond
-import io.ktor.response.respondBytes
+import io.ktor.response.*
 import io.ktor.routing.*
 import no.nav.helse.dokument.Dokument
 import no.nav.helse.dokument.DokumentEier
@@ -79,10 +73,10 @@ internal fun Route.dokumentV1Apis(
     }
 
     get("$BASE_PATH/{dokumentId}") {
+        logger.info("Henter dokument")
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
         val etterspurtJson = call.request.etterspurtJson()
-        logger.info("Henter dokument")
         logger.info("$dokumentId")
 
         logger.trace("EtterspurtJson=$etterspurtJson")
