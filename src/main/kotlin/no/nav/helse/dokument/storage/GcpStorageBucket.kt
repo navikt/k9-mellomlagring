@@ -107,7 +107,7 @@ class GcpStorageBucket(
         return try {
             gcpStorage.get(bucketName, key.value)
                 .toBuilder()
-                .setCustomTime(ZonedDateTime.now().plusWeeks(2).toEpochSecond())
+                .setCustomTime(ZonedDateTime.now(UTC).plusWeeks(2).toInstant().toEpochMilli())
                 .setMetadata(metadata)
                 .build()
                 .update() != null
