@@ -1,10 +1,11 @@
 package no.nav.helse.dokument.storage
 
-import com.google.cloud.storage.Blob
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
+import com.google.cloud.storage.Bucket
+import com.google.cloud.storage.BucketInfo.LifecycleRule
 import com.google.cloud.storage.StorageException
-import io.ktor.util.date.*
+import com.google.common.collect.ImmutableList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
@@ -22,6 +23,28 @@ class GcpStorageBucket(
 
     init {
         ensureBucketExists()
+        enableLifecycleManagement()
+    }
+
+    fun enableLifecycleManagement() {
+        val bucket: Bucket = gcpStorage.get(bucketName)
+
+        // See the LifecycleRule documentation for additional info on what you can do with lifecycle
+        // management rules. This one deletes objects that are over 100 days old.
+        // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
+        bucket
+            .toBuilder()
+            .setLifecycleRules(
+                ImmutableList.of(
+                    LifecycleRule(
+                        LifecycleRule.LifecycleAction.newDeleteAction(),
+                        LifecycleRule.LifecycleCondition.newBuilder().setDaysSinceCustomTime(1).build()
+                    )
+                )
+            )
+            .build()
+            .update()
+        println("Lifecycle management was enabled and configured for bucket $bucketName")
     }
 
     override fun hent(key: StorageKey): StorageValue? {
@@ -53,18 +76,18 @@ class GcpStorageBucket(
     override fun lagre(key: StorageKey, value: StorageValue) {
         val blobId = BlobId.of(bucketName, key.value)
         val blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build()
-
         lagre(blobInfo, value)
     }
 
     override fun lagre(key: StorageKey, value: StorageValue, expires: ZonedDateTime) {
         val blobId = BlobId.of(bucketName, key.value)
-        val blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain")
+        val blobInfo = BlobInfo.newBuilder(blobId)
+            .setContentType("text/plain")
+            .setCustomTime(ZonedDateTime.now().toEpochSecond())
             .setMetadata(
                 mapOf(
                     "contentType" to "text/plain",
-                    "contentLength" to "${value.value.toByteArray().size.toLong()}",
-                    "expirationTime" to "${expires.toGMTDate().toJvmDate()}"
+                    "contentLength" to "${value.value.toByteArray().size.toLong()}"
                 )
             )
             .build()
@@ -85,6 +108,7 @@ class GcpStorageBucket(
         return try {
             gcpStorage.get(bucketName, key.value)
                 .toBuilder()
+                .setCustomTime(ZonedDateTime.now().plusWeeks(2).toEpochSecond())
                 .setMetadata(metadata)
                 .build()
                 .update() != null
