@@ -117,7 +117,7 @@ fun Application.k9Mellomlagring() {
     }
 
     intercept(ApplicationCallPipeline.Monitoring) {
-        call.request.log(verbose = true)
+        call.request.log()
     }
 
     install(CallLogging) {
