@@ -121,18 +121,28 @@ internal fun Route.dokumentV1Apis(
     }
 
     put("$BASE_PATH/{dokumentId}/persister") {
+        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val issuer = principal.payload.issuer
+        if (issuer == loginServiceV1Issuer) {
+            call.respondForbiddenAccess(issuer)
+            return@put
+        }
+
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
         logger.info("Persisterer dokument med id: {}", dokumentId.id)
 
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
-        val result = dokumentService.persister(
-            dokumentId = dokumentId,
-            eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
-        )
-        when {
-            result -> call.respond(HttpStatusCode.NoContent)
-            else -> call.respond(HttpStatusCode.NotFound)
+        val result = when (issuer) {
+            azureV1Issuer, azureV2Issuer -> dokumentService.persister(
+                dokumentId = dokumentId,
+                eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+            )
+            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+        }
+
+        when(result) {
+            true -> call.respond(HttpStatusCode.NoContent)
+            false -> call.respond(HttpStatusCode.NotFound)
         }
     }
 }
@@ -180,6 +190,16 @@ private suspend fun ApplicationCall.respondDokumentNotFound(dokumentId: Dokument
         detail = "Dokument med ID ${dokumentId.id} ikke funnet."
     )
     respond(HttpStatusCode.NotFound, problemDetails)
+}
+
+private suspend fun ApplicationCall.respondForbiddenAccess(issuer: String) {
+
+    val problemDetails = DefaultProblemDetails(
+        status = 403,
+        title = "issuer-not-allowed",
+        detail = "Issuer: $issuer er ikke tillatt på dette endepunktet. Det er kun tillatt med Azure issuers."
+    )
+    respond(HttpStatusCode.Forbidden, problemDetails)
 }
 
 private suspend fun ApplicationCall.respondCreatedDokument(baseUrl: String, dokumentId: DokumentId) {
