@@ -31,20 +31,25 @@ class GcpStorageBucket(
     fun enableLifecycleManagement() {
         val bucket: Bucket = gcpStorage.get(bucketName)
 
-        // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
-        bucket
-            .toBuilder()
-            .setLifecycleRules(
-                ImmutableList.of(
-                    LifecycleRule(
-                        LifecycleRule.LifecycleAction.newDeleteAction(),
-                        LifecycleRule.LifecycleCondition.newBuilder().setDaysSinceCustomTime(1).build()
+        when(bucket.lifecycleRules.isEmpty()) {
+                true -> {
+                // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
+                bucket
+                    .toBuilder()
+                    .setLifecycleRules(
+                        ImmutableList.of(
+                            LifecycleRule(
+                                LifecycleRule.LifecycleAction.newDeleteAction(),
+                                LifecycleRule.LifecycleCondition.newBuilder().setDaysSinceCustomTime(1).build()
+                            )
+                        )
                     )
-                )
-            )
-            .build()
-            .update()
-        logger.info("Lifecycle management aktivert og konfigurert for bucket $bucketName")
+                    .build()
+                    .update()
+                    logger.info("Lifecycle management aktivert og konfigurert for bucket $bucketName")
+            }
+            false -> logger.info("Lifecycle management allerede aktivert og konfigurert for bucket $bucketName")
+        }
     }
 
     override fun hent(key: StorageKey): StorageValue? {
