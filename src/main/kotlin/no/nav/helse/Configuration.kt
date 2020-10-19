@@ -3,7 +3,6 @@ package no.nav.helse
 import com.google.cloud.storage.StorageOptions
 import io.ktor.config.*
 import io.ktor.util.*
-import no.nav.helse.dokument.eier.HentEierFra
 import no.nav.helse.dokument.storage.GcpStorageBucket
 import no.nav.helse.dokument.storage.InMemoryStorage
 import no.nav.helse.dokument.storage.Storage
@@ -93,13 +92,7 @@ internal data class Configuration(private val config: ApplicationConfig) {
     }
 
     fun getGcpStorageConfigured(): com.google.cloud.storage.Storage {
-        return when {
-            gcsClientServiceEndpoint.isNullOrBlank() -> StorageOptions.getDefaultInstance().service
-            else -> StorageOptions.newBuilder()
-                .setHost(gcsClientServiceEndpoint)
-                .build()
-                .service
-        }
+        return StorageOptions.getDefaultInstance().service
     }
 
     internal fun getS3ExpirationInDays(): Int? =
