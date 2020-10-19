@@ -83,7 +83,6 @@ PUT @ /v1/dokument/{dokumentId}
 
 ### Customized Dokument ID
 - Velge dokumentID selv om man ikke har noe sted å lagre den genererte
-- For systembruker kan det settes en `Expires` request header som ISO8601 ZonedDateTime for når den expirer.
 
 #### PUT @ /v1/dokument/customized/{customDokumentId}
 - Samme format som ved lagring av vanlig dokument
