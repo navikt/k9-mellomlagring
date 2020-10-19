@@ -13,12 +13,12 @@
     {
       "name": "omsorgspenger-midlertidig-alene-prosessering",
       "namespace": "dusseldorf",
-      "cluster": "dev-gcp"
+      "cluster": "prod-gcp"
     },
     {
       "name": "k9-joark",
       "namespace": "default",
-      "cluster": "dev-fss"
+      "cluster": "prod-fss"
     }
   ],
   "bucketName": "k9-mellomlagring",
