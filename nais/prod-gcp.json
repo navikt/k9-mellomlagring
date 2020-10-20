@@ -27,7 +27,7 @@
     "AZURE_V1_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration",
     "VIRUS_SCAN_URL": "http://clamav.clamav/scan",
     "BASE_URL": "https://k9-mellomlagring.nav.no",
-    "BUCKET_NAME": "k9-mellomlagring"
+    "BUCKET_NAME": "k9-mellomlagring-prod"
   },
   "slack-channel": "sif-alerts",
   "slack-notify-type": "<!channel> | k9-mellomlagring | ",
