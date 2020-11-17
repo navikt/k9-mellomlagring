@@ -32,19 +32,22 @@ internal object TestConfiguration {
             map["nav.auth.issuers.0.alias"] = "login-service-v1"
             map["nav.auth.issuers.0.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
 
-            map["nav.auth.issuers.1.type"] = "azure"
-            map["nav.auth.issuers.1.alias"] = "azure-v1"
-            map["nav.auth.issuers.1.discovery_endpoint"] = wireMockServer.getAzureV1WellKnownUrl()
-            map["nav.auth.issuers.1.audience"] = k9MellomlagringAzureClientId
-            map["nav.auth.issuers.1.azure.require_certificate_client_authentication"] = "false"
-            map["nav.auth.issuers.1.azure.required_roles"] = "access_as_application"
+            map["nav.auth.issuers.2.alias"] = "login-service-v2"
+            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
 
             map["nav.auth.issuers.2.type"] = "azure"
-            map["nav.auth.issuers.2.alias"] = "azure-v2"
-            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
+            map["nav.auth.issuers.2.alias"] = "azure-v1"
+            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getAzureV1WellKnownUrl()
             map["nav.auth.issuers.2.audience"] = k9MellomlagringAzureClientId
             map["nav.auth.issuers.2.azure.require_certificate_client_authentication"] = "false"
             map["nav.auth.issuers.2.azure.required_roles"] = "access_as_application"
+
+            map["nav.auth.issuers.3.type"] = "azure"
+            map["nav.auth.issuers.3.alias"] = "azure-v2"
+            map["nav.auth.issuers.3.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
+            map["nav.auth.issuers.3.audience"] = k9MellomlagringAzureClientId
+            map["nav.auth.issuers.3.azure.require_certificate_client_authentication"] = "false"
+            map["nav.auth.issuers.3.azure.required_roles"] = "access_as_application"
         }
 
         map["nav.local_or_test"] = "true"

@@ -38,6 +38,7 @@ internal fun Route.dokumentV1Apis(
     val azureV1Issuer = issuers.filterKeys { it.alias() == "azure-v1" }.entries.first().key.issuer()
     val azureV2Issuer = issuers.filterKeys { it.alias() == "azure-v2" }.entries.first().key.issuer()
     val loginServiceV1Issuer = issuers.filterKeys { it.alias() == "login-service-v1" }.entries.first().key.issuer()
+    val loginServiceV2Issuer = issuers.filterKeys { it.alias() == "login-service-v2" }.entries.first().key.issuer()
 
     post(BASE_PATH) {
         logger.info("Lagrer dokument")
@@ -59,6 +60,11 @@ internal fun Route.dokumentV1Apis(
                 eier = eier
             )
             loginServiceV1Issuer -> dokumentService.lagreDokument(
+                dokument = dokument.tilDokument(),
+                eier = eier,
+                expires = ZonedDateTime.now().plusMinutes(1)
+            )
+            loginServiceV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier,
                 expires = ZonedDateTime.now().plusMinutes(1)
@@ -123,7 +129,7 @@ internal fun Route.dokumentV1Apis(
     put("$BASE_PATH/{dokumentId}/persister") {
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
         val issuer = principal.payload.issuer
-        if (issuer == loginServiceV1Issuer) {
+        if (issuer == loginServiceV1Issuer || issuer == loginServiceV2Issuer) {
             call.respondForbiddenAccess(issuer)
             return@put
         }
