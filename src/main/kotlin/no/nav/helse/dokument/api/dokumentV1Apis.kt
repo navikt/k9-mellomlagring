@@ -59,15 +59,10 @@ internal fun Route.dokumentV1Apis(
                 dokument = dokument.tilDokument(),
                 eier = eier
             )
-            loginServiceV1Issuer -> dokumentService.lagreDokument(
+            loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier,
-                expires = ZonedDateTime.now().plusMinutes(1)
-            )
-            loginServiceV2Issuer -> dokumentService.lagreDokument(
-                dokument = dokument.tilDokument(),
-                eier = eier,
-                expires = ZonedDateTime.now().plusMinutes(1)
+                expires = ZonedDateTime.now().plusDays(1)
             )
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }

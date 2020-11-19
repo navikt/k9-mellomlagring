@@ -1,6 +1,7 @@
 package no.nav.helse
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV1WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getLoginServiceV1WellKnownUrl
@@ -32,8 +33,9 @@ internal object TestConfiguration {
             map["nav.auth.issuers.0.alias"] = "login-service-v1"
             map["nav.auth.issuers.0.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
 
-            map["nav.auth.issuers.2.alias"] = "login-service-v2"
-            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
+            map["nav.auth.issuers.1.alias"] = "login-service-v2"
+            map["nav.auth.issuers.1.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
+            map["nav.auth.issuers.1.audience"] = LoginService.V1_0.getAudience()
 
             map["nav.auth.issuers.2.type"] = "azure"
             map["nav.auth.issuers.2.alias"] = "azure-v1"

@@ -15,13 +15,13 @@ internal class EierResolver(
 
     private val azureV1Issuer = issuers.filterKeys { it.alias() == "azure-v1" }.entries.first().key.issuer()
     private val azureV2Issuer = issuers.filterKeys { it.alias() == "azure-v2" }.entries.first().key.issuer()
-    private val loginServiceV1Issuer =
-        issuers.filterKeys { it.alias() == "login-service-v1" }.entries.first().key.issuer()
+    private val loginServiceV1Issuer = issuers.filterKeys { it.alias() == "login-service-v1" }.entries.first().key.issuer()
+    private val loginServiceV2Issuer = issuers.filterKeys { it.alias() == "login-service-v2" }.entries.first().key.issuer()
 
     internal fun hentEier(principal: JWTPrincipal, eiersFødselsnummer: String): Eier {
         return when (val issuer = principal.payload.issuer) {
             azureV1Issuer, azureV2Issuer -> Eier(eiersFødselsnummer)
-            loginServiceV1Issuer -> hentEierFraClaim(principal, eiersFødselsnummer)
+            loginServiceV1Issuer, loginServiceV2Issuer -> hentEierFraClaim(principal, eiersFødselsnummer)
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
     }
