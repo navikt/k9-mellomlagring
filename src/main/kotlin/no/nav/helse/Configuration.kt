@@ -19,11 +19,13 @@ internal data class Configuration(private val config: ApplicationConfig) {
         private const val CRYPTO_PASSPHRASE_PREFIX = "CRYPTO_PASSPHRASE_"
 
         private const val LOGIN_SERVICE_V1_ALIAS = "login-service-v1"
+        private const val LOGIN_SERVICE_V2_ALIAS = "login-service-v2"
     }
 
     private val issuers = config.issuers().withAdditionalClaimRules(
         mapOf(
-            LOGIN_SERVICE_V1_ALIAS to setOf(EnforceEqualsOrContains("acr", "Level4"))
+            LOGIN_SERVICE_V1_ALIAS to setOf(EnforceEqualsOrContains("acr", "Level4")),
+            LOGIN_SERVICE_V2_ALIAS to setOf(EnforceEqualsOrContains("acr", "Level4"))
         )
     )
 

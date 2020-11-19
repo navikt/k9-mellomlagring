@@ -43,6 +43,8 @@ spec:
   gcp:
     buckets:
       - name: {{bucketName}}
+        retentionPeriodDays: 3650 #Fjernes når naiserator er fikset for dette. Tilsvarer 100 år
+
   accessPolicy:
     inbound:
       rules:
@@ -64,3 +66,4 @@ spec:
   {{/each}}
   envFrom:
     - secret: k9-mellomlagring.crypto
+    - configmap: loginservice-idporten
