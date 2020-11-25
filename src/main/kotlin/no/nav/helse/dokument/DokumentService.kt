@@ -9,7 +9,6 @@ import no.nav.helse.dokument.storage.StorageKey
 import no.nav.helse.dokument.storage.StorageValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 
 private val logger: Logger = LoggerFactory.getLogger("nav.DokumentService")
 
@@ -50,7 +49,7 @@ data class DokumentService(
         customDokumentId: CustomDokumentId,
         dokument: Dokument,
         eier: Eier,
-        expires: ZonedDateTime?
+        medHold: Boolean = false
     ) {
         virusScanner?.scan(dokument)
 
@@ -70,10 +69,8 @@ data class DokumentService(
             value = encrypted
         )
 
-        when (expires) {
-            null -> storage.lagre(storageKey, storageValue)
-            else -> storage.lagre(storageKey, storageValue, expires)
-        }
+        storage.lagre(storageKey, storageValue, medHold)
+
     }
 
     fun hentDokument(
@@ -128,7 +125,7 @@ data class DokumentService(
     suspend fun lagreDokument(
         dokument: Dokument,
         eier: Eier,
-        expires: ZonedDateTime? = null
+        medHold: Boolean = true
     ): DokumentId {
         virusScanner?.scan(dokument)
 
@@ -144,33 +141,23 @@ data class DokumentService(
 
         logger.trace("Larer dokument.")
 
-        if (expires == null) {
-            storage.lagre(
-                key = generateStorageKey(
-                    dokumentId = dokumentId,
-                    eier = eier
-                ),
-                value = StorageValue(
-                    value = encrypted
-                )
-            )
-        } else {
-            storage.lagre(
-                key = generateStorageKey(
-                    dokumentId = dokumentId,
-                    eier = eier
-                ),
-                value = StorageValue(
-                    value = encrypted
-                ),
-                expires = expires
-            )
-        }
+        storage.lagre(
+            key = generateStorageKey(
+                dokumentId = dokumentId,
+                eier = eier
+            ),
+            value = StorageValue(
+                value = encrypted
+            ),
+            hold = medHold
+        )
 
         logger.trace("Lagring OK.")
 
         return dokumentId
     }
+
+    fun dokumentHarHold(dokumentId: DokumentId, eier: Eier): Boolean = storage.harHold(generateStorageKey(dokumentId, eier))
 
     private fun generateStorageKey(
         dokumentId: DokumentId,

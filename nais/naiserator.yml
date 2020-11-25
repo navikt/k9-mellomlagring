@@ -43,7 +43,7 @@ spec:
   gcp:
     buckets:
       - name: {{bucketName}}
-        retentionPeriodDays: 3650 #Fjernes når naiserator er fikset for dette. Tilsvarer 100 år
+        retentionPeriodDays: 30
 
   accessPolicy:
     inbound:

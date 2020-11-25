@@ -1,18 +1,15 @@
 package no.nav.helse.dokument.api
 
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
+import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.request.*
-import io.ktor.response.respond
+import io.ktor.response.*
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.put
-import io.ktor.util.getOrFail
+import io.ktor.util.*
 import no.nav.helse.dokument.Dokument
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver
@@ -50,8 +47,7 @@ internal fun Route.customIdV1Apis(
                 dokumentService.lagreDokument(
                     customDokumentId = customDokumentId,
                     dokument = dokument,
-                    eier = eierResolver.hentEier(principal, dokument.eier.eiersFødselsnummer),
-                    expires = expires
+                    eier = eierResolver.hentEier(principal, dokument.eier.eiersFødselsnummer)
                 )
                 call.respond(HttpStatusCode.NoContent)
             }

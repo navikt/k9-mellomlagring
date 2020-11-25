@@ -18,7 +18,6 @@ import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 
 private val logger: Logger = LoggerFactory.getLogger("nav.dokumentApis")
 private const val BASE_PATH = "v1/dokument"
@@ -54,15 +53,18 @@ internal fun Route.dokumentV1Apis(
         logger.trace("Dokument hetent fra reqeusten, forsøker å lagre")
         val eier = eierResolver.hentEier(principal, dokument.eier!!.eiersFødselsnummer)
 
-        val dokumentId = when (val issuer = principal.payload.issuer) {
+        val issuer = principal.payload.issuer
+        logger.info("Issuer er $issuer")
+
+        val dokumentId = when (issuer) {
             azureV1Issuer, azureV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
-                eier = eier
+                eier = eier,
+                medHold = true
             )
             loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
-                eier = eier,
-                expires = ZonedDateTime.now().plusDays(1)
+                eier = eier
             )
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
@@ -110,10 +112,30 @@ internal fun Route.dokumentV1Apis(
 
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
-        val result = dokumentService.slettDokument(
-            dokumentId = dokumentId,
-            eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
-        )
+        val issuer = principal.payload.issuer
+        logger.info("Issuer er $issuer")
+
+        val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+
+        val result = when (issuer) {
+            azureV1Issuer, azureV2Issuer -> {
+                dokumentService.slettDokument(
+                    dokumentId = dokumentId,
+                    eier = eier
+                )
+            }
+            loginServiceV1Issuer, loginServiceV2Issuer -> {
+                if (dokumentService.dokumentHarHold(dokumentId, eier)) {
+                    throw IllegalStateException("Loginservice issuer har ikke lov til å slette dokument med hold på.")
+                } else {
+                    dokumentService.slettDokument(
+                        dokumentId = dokumentId,
+                        eier = eier
+                    )
+                }
+            }
+            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+        }
 
         when {
             result -> call.respond(HttpStatusCode.NoContent)
