@@ -125,7 +125,7 @@ data class DokumentService(
     suspend fun lagreDokument(
         dokument: Dokument,
         eier: Eier,
-        medHold: Boolean = true
+        medHold: Boolean = false
     ): DokumentId {
         virusScanner?.scan(dokument)
 
