@@ -111,10 +111,13 @@ internal fun Route.dokumentV1Apis(
 
         val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
 
-        val result = dokumentService.slettDokument(
-            dokumentId = dokumentId,
-            eier = eier
-        )
+        val result = when (val issuer = principal.payload.issuer) {
+            azureV1Issuer, azureV2Issuer, loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.slettDokument(
+                dokumentId = dokumentId,
+                eier = eier
+            )
+            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+        }
 
         when {
             result -> call.respond(HttpStatusCode.NoContent)
