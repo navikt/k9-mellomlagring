@@ -119,9 +119,9 @@ internal fun Route.dokumentV1Apis(
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
 
-        when {
-            result -> call.respond(HttpStatusCode.NoContent)
-            else -> call.respond(HttpStatusCode.NotFound)
+        when(result) {
+            true -> call.respond(HttpStatusCode.NoContent)
+            false -> call.respond(HttpStatusCode.NotFound)
         }
     }
 
