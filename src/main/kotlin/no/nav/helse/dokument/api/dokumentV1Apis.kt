@@ -53,10 +53,7 @@ internal fun Route.dokumentV1Apis(
         logger.trace("Dokument hetent fra reqeusten, forsøker å lagre")
         val eier = eierResolver.hentEier(principal, dokument.eier!!.eiersFødselsnummer)
 
-        val issuer = principal.payload.issuer
-        logger.info("Issuer er $issuer")
-
-        val dokumentId = when (issuer) {
+        val dokumentId = when (val issuer = principal.payload.issuer) {
             azureV1Issuer, azureV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier,
@@ -112,12 +109,9 @@ internal fun Route.dokumentV1Apis(
 
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
-        val issuer = principal.payload.issuer
-        logger.info("Issuer er $issuer")
-
         val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
 
-        val result = when (issuer) {
+        val result = when (val issuer = principal.payload.issuer) {
             azureV1Issuer, azureV2Issuer -> {
                 dokumentService.slettDokument(
                     dokumentId = dokumentId,
