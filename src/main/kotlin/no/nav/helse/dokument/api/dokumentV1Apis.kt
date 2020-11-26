@@ -125,14 +125,10 @@ internal fun Route.dokumentV1Apis(
                 )
             }
             loginServiceV1Issuer, loginServiceV2Issuer -> {
-                if (dokumentService.dokumentHarHold(dokumentId, eier)) {
-                    throw IllegalStateException("Loginservice issuer har ikke lov til å slette dokument med hold på.")
-                } else {
-                    dokumentService.slettDokument(
-                        dokumentId = dokumentId,
-                        eier = eier
-                    )
-                }
+                dokumentService.slettDokument(
+                    dokumentId = dokumentId,
+                    eier = eier
+                )
             }
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
@@ -163,7 +159,7 @@ internal fun Route.dokumentV1Apis(
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
 
-        when(result) {
+        when (result) {
             true -> call.respond(HttpStatusCode.NoContent)
             false -> call.respond(HttpStatusCode.NotFound)
         }
