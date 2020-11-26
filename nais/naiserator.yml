@@ -42,8 +42,8 @@ spec:
       tenant: {{azureTenant}}
   gcp:
     buckets:
-      - name: {{bucketName}}
-        retentionPeriodDays: 30
+      - name: {{ bucket.name }}
+        retentionPeriodDays: {{ bucket.retentionInDays }}
 
   accessPolicy:
     inbound:
