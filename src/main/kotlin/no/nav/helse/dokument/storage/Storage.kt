@@ -1,13 +1,11 @@
 package no.nav.helse.dokument.storage
 
-import java.time.ZonedDateTime
-
 interface Storage {
     fun hent(key : StorageKey) : StorageValue?
     fun slett(storageKey: StorageKey) : Boolean
-    fun lagre(key: StorageKey, value: StorageValue)
-    fun lagre(key: StorageKey, value: StorageValue, expires: ZonedDateTime)
+    fun lagre(key: StorageKey, value: StorageValue, hold: Boolean)
     fun persister(key: StorageKey): Boolean
+    fun harHold(key: StorageKey): Boolean
     fun ready()
 }
 

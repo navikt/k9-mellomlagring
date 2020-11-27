@@ -18,7 +18,6 @@ import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 
 private val logger: Logger = LoggerFactory.getLogger("nav.dokumentApis")
 private const val BASE_PATH = "v1/dokument"
@@ -57,12 +56,12 @@ internal fun Route.dokumentV1Apis(
         val dokumentId = when (val issuer = principal.payload.issuer) {
             azureV1Issuer, azureV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
-                eier = eier
+                eier = eier,
+                medHold = true
             )
             loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
-                eier = eier,
-                expires = ZonedDateTime.now().plusDays(1)
+                eier = eier
             )
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
@@ -110,14 +109,19 @@ internal fun Route.dokumentV1Apis(
 
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
-        val result = dokumentService.slettDokument(
-            dokumentId = dokumentId,
-            eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
-        )
+        val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
 
-        when {
-            result -> call.respond(HttpStatusCode.NoContent)
-            else -> call.respond(HttpStatusCode.NotFound)
+        val result = when (val issuer = principal.payload.issuer) {
+            azureV1Issuer, azureV2Issuer, loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.slettDokument(
+                dokumentId = dokumentId,
+                eier = eier
+            )
+            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+        }
+
+        when(result) {
+            true -> call.respond(HttpStatusCode.NoContent)
+            false -> call.respond(HttpStatusCode.NotFound)
         }
     }
 
@@ -141,7 +145,7 @@ internal fun Route.dokumentV1Apis(
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
 
-        when(result) {
+        when (result) {
             true -> call.respond(HttpStatusCode.NoContent)
             false -> call.respond(HttpStatusCode.NotFound)
         }

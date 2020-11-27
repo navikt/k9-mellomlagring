@@ -1,22 +1,18 @@
 package no.nav.helse.dokument.storage
 
+import com.google.cloud.storage.Blob
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
-import com.google.cloud.storage.Bucket
-import com.google.cloud.storage.BucketInfo.LifecycleRule
 import com.google.cloud.storage.StorageException
-import com.google.common.collect.ImmutableList
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
-import java.time.LocalDateTime
-import java.time.ZoneOffset.UTC
-import java.time.ZonedDateTime
+import com.google.cloud.storage.Storage as GcpStorage
 
 
 class GcpStorageBucket(
-    private val gcpStorage: com.google.cloud.storage.Storage,
+    private val gcpStorage: GcpStorage,
     private val bucketName: String
 ) : Storage {
     companion object {
@@ -25,31 +21,6 @@ class GcpStorageBucket(
 
     init {
         ensureBucketExists()
-        enableLifecycleManagement()
-    }
-
-    fun enableLifecycleManagement() {
-        val bucket: Bucket = gcpStorage.get(bucketName)
-
-        when(bucket.lifecycleRules.isEmpty()) {
-                true -> {
-                // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
-                bucket
-                    .toBuilder()
-                    .setLifecycleRules(
-                        ImmutableList.of(
-                            LifecycleRule(
-                                LifecycleRule.LifecycleAction.newDeleteAction(),
-                                LifecycleRule.LifecycleCondition.newBuilder().setDaysSinceCustomTime(1).build()
-                            )
-                        )
-                    )
-                    .build()
-                    .update()
-                    logger.info("Lifecycle management aktivert og konfigurert for bucket $bucketName")
-            }
-            false -> logger.info("Lifecycle management allerede aktivert og konfigurert for bucket $bucketName")
-        }
     }
 
     override fun hent(key: StorageKey): StorageValue? {
@@ -66,6 +37,9 @@ class GcpStorageBucket(
     }
 
     override fun slett(storageKey: StorageKey): Boolean {
+
+        if (harHold(storageKey)) toggleHold(storageKey, false)
+
         val value = hent(storageKey)
         return if (value == null) false else {
             return try {
@@ -78,26 +52,31 @@ class GcpStorageBucket(
         }
     }
 
-    override fun lagre(key: StorageKey, value: StorageValue) {
+    override fun lagre(key: StorageKey, value: StorageValue, hold: Boolean) {
         val blobId = BlobId.of(bucketName, key.value)
         val blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build()
         lagre(blobInfo, value)
+
+        if (hold) toggleHold(key, hold)
     }
 
-    override fun lagre(key: StorageKey, value: StorageValue, expires: ZonedDateTime) {
-        val blobId = BlobId.of(bucketName, key.value)
-        val blobInfo = BlobInfo.newBuilder(blobId)
-            .setContentType("text/plain")
-            .setCustomTime(ZonedDateTime.now(UTC).toInstant().toEpochMilli())
-            .setMetadata(
-                mapOf(
-                    "contentType" to "text/plain",
-                    "contentLength" to "${value.value.toByteArray().size.toLong()}"
-                )
-            )
-            .build()
+    private fun toggleHold(key: StorageKey, hold: Boolean) {
+        val blobInfo = hentBlobInfoBuilder(key).setTemporaryHold(hold).build()
+        gcpStorage.update(blobInfo)
+        if(hold) logger.info("Midlertidig hold er plassert på dokument med id: ${key.value}")
+        else logger.info("Midlertidig hold er fjernet på dokument med id: ${key.value}")
+    }
 
-        lagre(blobInfo, value)
+    override fun harHold(key: StorageKey): Boolean {
+        val blobId = BlobId.of(bucketName, key.value)
+        val blob: Blob = gcpStorage.get(blobId, GcpStorage.BlobGetOption.fields(GcpStorage.BlobField.TEMPORARY_HOLD))
+
+        return blob.temporaryHold
+    }
+
+    private fun hentBlobInfoBuilder(key: StorageKey): BlobInfo.Builder {
+        val blobId = BlobId.of(bucketName, key.value)
+        return BlobInfo.newBuilder(blobId)
     }
 
     /**
@@ -111,18 +90,13 @@ class GcpStorageBucket(
         if (hent(key) == null) return false
 
         return try {
-            gcpStorage.get(bucketName, key.value)
-                .toBuilder()
-                .setCustomTime(LocalDateTime.MAX.toInstant(UTC).toEpochMilli())
-                .build()
-                .update() != null
+            toggleHold(key, true)
+            return true
         } catch (ex: StorageException) {
             logger.error("Feilet med å persistere objekt med id: ${key.value}", ex)
             return false
         }
     }
-
-
 
     private fun lagre(blobInfo: BlobInfo, value: StorageValue) {
         val content: ByteArray = value.value.toByteArray()
