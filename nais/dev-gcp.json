@@ -23,7 +23,7 @@
   ],
   "bucket": {
     "name": "k9-mellomlagring",
-    "retentionInDays": "1"
+    "objectAge": "1"
   },
   "env": {
     "LOGIN_SERVICE_V1_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/NAVtestB2C.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten_ver1",

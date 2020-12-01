@@ -43,7 +43,8 @@ spec:
   gcp:
     buckets:
       - name: {{ bucket.name }}
-        retentionPeriodDays: {{ bucket.retentionInDays }}
+        lifecycleCondition:
+          age: {{ bucket.objectAge }}
 
   accessPolicy:
     inbound:
