@@ -19,6 +19,16 @@
       "name": "k9-joark",
       "namespace": "default",
       "cluster": "prod-fss"
+    },
+    {
+      "name": "omsorgsdager-melding-api",
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
+    },
+    {
+      "name": "omsorgsdager-melding-prosessering",
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
     }
   ],
   "bucket": {
