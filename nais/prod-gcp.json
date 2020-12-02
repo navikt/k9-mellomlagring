@@ -9,13 +9,7 @@
     "https://k9-mellomlagring.intern.nav.no"
   ],
   "azureTenant": "nav.no",
-  "preauthorizedApps": [
-    {
-      "name": "k9-joark",
-      "namespace": "default",
-      "cluster": "prod-fss"
-    }
-  ],
+  "k9-joark-cluster": "prod-fss",
   "bucket": {
     "name": "k9-mellomlagring-prod",
     "objectAge": "1"
