@@ -16,6 +16,16 @@
       "cluster": "dev-gcp"
     },
     {
+      "name": "omsorgsdager-melding-api",
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
+    },
+    {
+      "name": "omsorgsdager-melding-prosessering",
+      "namespace": "dusseldorf",
+      "cluster": "dev-gcp"
+    },
+    {
       "name": "k9-joark",
       "namespace": "default",
       "cluster": "dev-fss"
