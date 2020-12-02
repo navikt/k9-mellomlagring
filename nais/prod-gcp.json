@@ -11,24 +11,9 @@
   "azureTenant": "nav.no",
   "preauthorizedApps": [
     {
-      "name": "omsorgspenger-midlertidig-alene-prosessering",
-      "namespace": "dusseldorf",
-      "cluster": "prod-gcp"
-    },
-    {
       "name": "k9-joark",
       "namespace": "default",
       "cluster": "prod-fss"
-    },
-    {
-      "name": "omsorgsdager-melding-api",
-      "namespace": "dusseldorf",
-      "cluster": "dev-gcp"
-    },
-    {
-      "name": "omsorgsdager-melding-prosessering",
-      "namespace": "dusseldorf",
-      "cluster": "dev-gcp"
     }
   ],
   "bucket": {

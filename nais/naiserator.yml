@@ -49,6 +49,9 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: omsorgspenger-midlertidig-alene-prosessering
+        - application: omsorgsdager-melding-api
+        - application: omsorgsdager-melding-prosessering
     {{#each preauthorizedApps as |app|}}
         - application: {{app.name}}
           namespace: {{app.namespace}}
