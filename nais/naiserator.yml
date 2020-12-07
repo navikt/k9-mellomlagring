@@ -49,11 +49,12 @@ spec:
   accessPolicy:
     inbound:
       rules:
-    {{#each preauthorizedApps as |app|}}
-        - application: {{app.name}}
-          namespace: {{app.namespace}}
-          cluster: {{app.cluster}}
-      {{/each}}
+        - application: omsorgspenger-midlertidig-alene-prosessering
+        - application: omsorgsdager-melding-api
+        - application: omsorgsdager-melding-prosessering
+        - application: k9-joark
+          namespace: default
+          cluster: {{k9-joark-cluster}}
     outbound:
       external:
         - host: login.microsoftonline.com
