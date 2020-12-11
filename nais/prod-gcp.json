@@ -6,8 +6,7 @@
   "minReplicas": "2",
   "maxReplicas": "4",
   "ingresses": [
-    "https://k9-mellomlagring.intern.nav.no",
-    "https://k9-mellomlagring.nav.no"
+    "https://k9-mellomlagring.intern.nav.no"
   ],
   "azureTenant": "nav.no",
   "k9-joark-cluster": "prod-fss",
