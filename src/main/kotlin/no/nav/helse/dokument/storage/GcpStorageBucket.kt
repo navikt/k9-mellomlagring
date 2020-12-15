@@ -71,7 +71,10 @@ class GcpStorageBucket(
         val blobId = BlobId.of(bucketName, key.value)
         val blob: Blob = gcpStorage.get(blobId, GcpStorage.BlobGetOption.fields(GcpStorage.BlobField.TEMPORARY_HOLD))
 
-        return blob.temporaryHold
+        return when(blob.temporaryHold){
+            true -> true
+            else -> false
+        }
     }
 
     private fun hentBlobInfoBuilder(key: StorageKey): BlobInfo.Builder {
