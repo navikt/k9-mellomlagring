@@ -51,6 +51,7 @@ spec:
       rules:
         - application: omsorgspenger-midlertidig-alene-prosessering
         - application: omsorgsdager-melding-api
+        - application: omsorgspengerutbetalingsoknad-arbeidstaker-api
         - application: omsorgsdager-melding-prosessering
         - application: k9-joark
           namespace: default
