@@ -6,12 +6,12 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "1.25"
-val gcpStorageVersion = "1.113.9"
+val gcpStorageVersion = "1.113.10"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.4.30"
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
@@ -42,7 +42,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }
-    testImplementation("io.mockk:mockk:1.10.0")
+    testImplementation("io.mockk:mockk:1.10.6")
     testImplementation("org.skyscreamer:jsonassert:1.5.0")
     testImplementation( "com.github.stefanbirkner:system-rules:1.19.0")
 
