@@ -62,7 +62,6 @@ repositories {
         }
     }
 
-    jcenter()
     mavenLocal()
     mavenCentral()
 }
