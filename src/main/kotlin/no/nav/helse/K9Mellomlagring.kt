@@ -1,7 +1,7 @@
 package no.nav.helse
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -133,7 +133,7 @@ private fun getVirusScanner(config: Configuration): VirusScanner? {
 }
 
 internal fun ObjectMapper.k9MellomlagringConfigured() = dusseldorfConfigured()
-    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+    .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
 
 class StorageHealthCheck(
     private val storage: Storage
