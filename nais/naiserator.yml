@@ -52,6 +52,7 @@ spec:
         - application: omsorgspenger-midlertidig-alene-prosessering
         - application: omsorgsdager-melding-api
         - application: omsorgspenger-api
+        - application: k9-ettersending-api
         - application: omsorgspengerutbetalingsoknad-arbeidstaker-api
         - application: omsorgsdager-melding-prosessering
         - application: k9-joark
