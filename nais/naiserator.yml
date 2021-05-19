@@ -53,7 +53,7 @@ spec:
         - application: omsorgsdager-melding-api
         - application: omsorgspenger-api
         - application: k9-ettersending-api
-        #- application: omsorgspengerutbetaling-api
+        - application: omsorgspengerutbetaling-api
         - application: omsorgspengerutbetalingsoknad-arbeidstaker-api
         - application: omsorgsdager-melding-prosessering
         - application: k9-joark
