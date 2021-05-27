@@ -6,13 +6,13 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "1.26"
-val gcpStorageVersion = "1.113.14"
+val gcpStorageVersion = "1.114.0"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.4.32"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm") version "1.5.10"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 buildscript {
@@ -51,7 +51,7 @@ dependencies {
 repositories {
     maven("https://dl.bintray.com/kotlin/ktor")
     maven("https://kotlin.bintray.com/kotlinx")
-    maven("http://packages.confluent.io/maven/")
+    maven("https://packages.confluent.io/maven/")
 
     maven {
         name = "GitHubPackages"
@@ -94,5 +94,5 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.8.3"
+    gradleVersion = "7.0.1"
 }
