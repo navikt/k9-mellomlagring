@@ -57,7 +57,6 @@ spec:
         - application: omsorgspengerutbetalingsoknad-arbeidstaker-api
         - application: omsorgsdager-melding-prosessering
         - application: omsorgsdager-aleneomsorg-prosessering
-        - application: pleiepengesoknad-api
         - application: k9-joark
           namespace: default
           cluster: {{k9-joark-cluster}}
