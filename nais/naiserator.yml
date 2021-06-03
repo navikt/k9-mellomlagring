@@ -5,6 +5,8 @@ metadata:
   namespace: {{namespace}}
   labels:
     team: {{team}}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100"
 spec:
   image: {{ image }}
   port: 8080
