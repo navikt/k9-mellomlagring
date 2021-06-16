@@ -50,7 +50,7 @@ internal fun Route.dokumentV1Apis(
 
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
-        logger.trace("Dokument hetent fra reqeusten, forsøker å lagre")
+        logger.trace("Dokument hentet fra reqeusten, forsøker å lagre")
         val eier = eierResolver.hentEier(principal, dokument.eier!!.eiersFødselsnummer)
 
         val dokumentId = when (val issuer = principal.payload.issuer) {
@@ -66,9 +66,7 @@ internal fun Route.dokumentV1Apis(
             else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
         }
 
-        logger.trace("Dokument lagret.")
-        logger.info("$dokumentId")
-
+        logger.info("Dokument lagret med id: {}", dokumentId)
         call.respondCreatedDokument(baseUrl, dokumentId)
     }
 
@@ -91,21 +89,29 @@ internal fun Route.dokumentV1Apis(
         logger.trace("FantDokment=${dokument != null}")
 
         when {
-            dokument == null -> call.respondDokumentNotFound(dokumentId)
-            etterspurtJson -> call.respond(HttpStatusCode.OK, dokument)
-            else -> call.respondBytes(
-                bytes = dokument.content,
-                contentType = ContentType.parse(dokument.contentType),
-                status = HttpStatusCode.OK
-            )
+            dokument == null -> {
+                logger.error("Dokument med id ikke funnet: {}", dokumentId)
+                call.respondDokumentNotFound(dokumentId)
+            }
+            etterspurtJson -> {
+                logger.info("Dokument(etterspurtJson) med id funnet: {}", dokumentId)
+                call.respond(HttpStatusCode.OK, dokument)
+            }
+            else -> {
+                logger.info("Dokument(etterspurtBytes) med id funnet: {}", dokumentId)
+                call.respondBytes(
+                    bytes = dokument.content,
+                    contentType = ContentType.parse(dokument.contentType),
+                    status = HttpStatusCode.OK
+                )
+            }
         }
     }
 
     delete("$BASE_PATH/{dokumentId}") {
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
-        logger.info("Sletter dokument")
-        logger.info("$dokumentId")
+        logger.info("Sletter dokument med id: {}", dokumentId)
 
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
 
@@ -120,8 +126,14 @@ internal fun Route.dokumentV1Apis(
         }
 
         when(result) {
-            true -> call.respond(HttpStatusCode.NoContent)
-            false -> call.respond(HttpStatusCode.NotFound)
+            true -> {
+                logger.info("Dokument med id slettet: {}", dokumentId)
+                call.respond(HttpStatusCode.NoContent)
+            }
+            false -> {
+                logger.info("Dokument med id ikke funnet: {}", dokumentId)
+                call.respond(HttpStatusCode.NotFound)
+            }
         }
     }
 
@@ -135,7 +147,7 @@ internal fun Route.dokumentV1Apis(
 
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
-        logger.info("Persisterer dokument med id: {}", dokumentId.id)
+        logger.info("Persisterer dokument med id: {}", dokumentId)
 
         val result = when (issuer) {
             azureV1Issuer, azureV2Issuer -> dokumentService.persister(
@@ -146,8 +158,14 @@ internal fun Route.dokumentV1Apis(
         }
 
         when (result) {
-            true -> call.respond(HttpStatusCode.NoContent)
-            false -> call.respond(HttpStatusCode.NotFound)
+            true -> {
+                logger.info("Dokument med id persistert: {}", dokumentId)
+                call.respond(HttpStatusCode.NoContent)
+            }
+            false -> {
+                logger.info("Dokument med id ikke funnet: {}", dokumentId)
+                call.respond(HttpStatusCode.NotFound)
+            }
         }
     }
 }

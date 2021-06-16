@@ -1,7 +1,7 @@
 package no.nav.helse.dokument.api
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.ktor.http.ContentType
+import io.ktor.http.*
 import no.nav.helse.k9MellomlagringConfigured
 import org.apache.tika.Tika
 import org.slf4j.Logger
@@ -44,7 +44,10 @@ class ContentTypeService {
     ): Boolean {
         val parsedContentType = ContentType.parseOrNull(contentType) ?: return false
         val supported = supportedContentTypes.contains(parsedContentType)
-        if (!supported) return false
+        if (!supported) {
+            logger.error("Ikke støttet contentType: {}. Støttet contentType: {}", parsedContentType, supportedContentTypes)
+            return false
+        }
         return isWhatItSeems(
             content = content,
             seems = parsedContentType
