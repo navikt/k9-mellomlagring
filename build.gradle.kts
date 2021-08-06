@@ -65,11 +65,6 @@ repositories {
         }
     }
     mavenCentral()
-
-    maven("https://dl.bintray.com/kotlin/ktor")
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://packages.confluent.io/maven/")
-
 }
 
 
@@ -100,7 +95,7 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.0.1"
+    gradleVersion = "7.1.1"
 }
 
 tasks.withType<Test> {
