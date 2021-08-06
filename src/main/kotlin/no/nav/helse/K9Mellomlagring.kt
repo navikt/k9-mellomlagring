@@ -8,7 +8,6 @@ import io.ktor.features.*
 import io.ktor.jackson.*
 import io.ktor.metrics.micrometer.*
 import io.ktor.routing.*
-import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.VirusScanner
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-@KtorExperimentalAPI
 fun Application.k9Mellomlagring() {
     val appId = environment.config.id()
     logProxyProperties()
@@ -126,7 +124,6 @@ fun Application.k9Mellomlagring() {
     }
 }
 
-@KtorExperimentalAPI
 private fun getVirusScanner(config: Configuration): VirusScanner? {
     if (!config.enableVirusScan()) return null
     return VirusScanner(url = config.getVirusScanUrl())

@@ -12,7 +12,6 @@ import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
 import java.net.URI
 
-@KtorExperimentalAPI
 internal data class Configuration(private val config: ApplicationConfig) {
 
     private companion object {
