@@ -64,6 +64,8 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
+
+    maven("https://jitpack.io")
     mavenCentral()
 }
 
