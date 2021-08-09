@@ -6,7 +6,7 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.0.0"
-val gcpStorageVersion = "1.118.0"
+val gcpStorageVersion = "1.118.1"
 val fuelVersion = "2.3.1"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
