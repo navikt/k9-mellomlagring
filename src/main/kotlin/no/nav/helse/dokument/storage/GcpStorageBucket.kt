@@ -94,10 +94,10 @@ class GcpStorageBucket(
 
         return try {
             toggleHold(key, true)
-            return true
+            true
         } catch (ex: StorageException) {
             logger.error("Feilet med å persistere objekt med id: ${key.value}", ex)
-            return false
+            false
         }
     }
 
