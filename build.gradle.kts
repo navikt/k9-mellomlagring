@@ -6,8 +6,11 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.0.0"
-val gcpStorageVersion = "1.118.0"
+val gcpStorageVersion = "1.118.1"
 val fuelVersion = "2.3.1"
+val mockKVersion = "1.12.0"
+val jsonassertVersion = "1.5.0"
+val systemRulesVersion = "1.19.0"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
@@ -47,9 +50,9 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }
-    testImplementation("io.mockk:mockk:1.12.0")
-    testImplementation("org.skyscreamer:jsonassert:1.5.0")
-    testImplementation( "com.github.stefanbirkner:system-rules:1.19.0")
+    testImplementation("io.mockk:mockk:$mockKVersion")
+    testImplementation("org.skyscreamer:jsonassert:$jsonassertVersion")
+    testImplementation( "com.github.stefanbirkner:system-rules:$systemRulesVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 }
 
