@@ -61,7 +61,7 @@ spec:
         - application: omsorgsdager-aleneomsorg-prosessering
         - application: pleiepengesoknad-api
         - application: k9-joark
-          namespace: default
+          namespace: {{namespace}}
           cluster: {{fss-cluster}}
         - application: k9-ettersending-prosessering
           namespace: {{namespace}}
