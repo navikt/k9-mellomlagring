@@ -137,7 +137,7 @@ internal fun Route.dokumentV1Apis(
         }
     }
 
-    delete("$BASE_PATH/persistert/{dokumentId}") {
+    put("$BASE_PATH/persistert/{dokumentId}") {
         val dokumentId = call.dokumentId()
         val dokumentEier = call.dokumentEier()
         logger.info("Sletter hold på persistert dokument med id: {}", dokumentId)

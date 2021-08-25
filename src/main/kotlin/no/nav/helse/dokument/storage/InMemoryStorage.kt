@@ -9,7 +9,7 @@ class InMemoryStorage : Storage {
     private val metadata = mutableMapOf<StorageKey, Map<String, Any>>()
 
     override fun fjerneHold(storageKey: StorageKey) {
-        this.storage[storageKey] ?: throw IllegalStateException("Fant ikke dokument å persistere.")
+        this.storage[storageKey] ?: throw IllegalStateException("Dokument med gitt storagekey ikke funnet.")
         metadata[storageKey] = mutableMapOf(BlobField.TEMPORARY_HOLD.name to false)
     }
 
