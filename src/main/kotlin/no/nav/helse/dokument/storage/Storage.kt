@@ -7,6 +7,7 @@ interface Storage {
     fun persister(key: StorageKey): Boolean
     fun harHold(key: StorageKey): Boolean
     fun ready()
+    fun fjerneHold(storageKey: StorageKey): Boolean
 }
 
 data class StorageKey(val value: String)

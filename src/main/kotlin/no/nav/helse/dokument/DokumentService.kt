@@ -157,6 +157,18 @@ data class DokumentService(
         return dokumentId
     }
 
+    fun fjerneHoldPåPersistertDokument(
+        dokumentId: DokumentId,
+        eier: Eier
+    ): Boolean {
+        return storage.fjerneHold(
+            generateStorageKey(
+                dokumentId = dokumentId,
+                eier = eier
+            )
+        )
+    }
+
     fun dokumentHarHold(dokumentId: DokumentId, eier: Eier): Boolean = storage.harHold(generateStorageKey(dokumentId, eier))
 
     private fun generateStorageKey(

@@ -137,6 +137,36 @@ internal fun Route.dokumentV1Apis(
         }
     }
 
+    put("$BASE_PATH/persistert/{dokumentId}") {
+        val dokumentId = call.dokumentId()
+        val dokumentEier = call.dokumentEier()
+        logger.info("Sletter hold på persistert dokument med id: {}", dokumentId)
+
+        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+
+       val resultat = when (val issuer = principal.payload.issuer) {
+            azureV1Issuer, azureV2Issuer, loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.fjerneHoldPåPersistertDokument(
+                dokumentId = dokumentId,
+                eier = eier
+            )
+            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+        }
+
+        when (resultat) {
+            true -> {
+                logger.info("Fjernet hold på dokument med id: {}", dokumentId)
+                call.respond(HttpStatusCode.OK)
+            }
+            false -> {
+                logger.info("Dokument med id ikke funnet: {}", dokumentId)
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        call.respond(HttpStatusCode.OK)
+    }
+
     put("$BASE_PATH/{dokumentId}/persister") {
         val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
         val issuer = principal.payload.issuer
