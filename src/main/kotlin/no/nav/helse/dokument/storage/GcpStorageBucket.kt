@@ -60,8 +60,10 @@ class GcpStorageBucket(
         if (hold) toggleHold(key, hold)
     }
 
-    override fun fjerneHold(storageKey: StorageKey) {
+    override fun fjerneHold(storageKey: StorageKey): Boolean {
+        hent(storageKey) ?: return false
         if (harHold(storageKey)) toggleHold(storageKey, false)
+        return true
     }
 
     private fun toggleHold(key: StorageKey, hold: Boolean) {

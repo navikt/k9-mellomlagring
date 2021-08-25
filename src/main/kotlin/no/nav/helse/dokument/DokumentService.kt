@@ -160,8 +160,8 @@ data class DokumentService(
     fun fjerneHoldPåPersistertDokument(
         dokumentId: DokumentId,
         eier: Eier
-    ){
-        storage.fjerneHold(
+    ): Boolean {
+        return storage.fjerneHold(
             generateStorageKey(
                 dokumentId = dokumentId,
                 eier = eier
