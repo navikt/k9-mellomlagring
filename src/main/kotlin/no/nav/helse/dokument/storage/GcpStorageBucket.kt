@@ -60,6 +60,10 @@ class GcpStorageBucket(
         if (hold) toggleHold(key, hold)
     }
 
+    override fun fjerneHold(storageKey: StorageKey) {
+        if (harHold(storageKey)) toggleHold(storageKey, false)
+    }
+
     private fun toggleHold(key: StorageKey, hold: Boolean) {
         val blobInfo = hentBlobInfoBuilder(key).setTemporaryHold(hold).build()
         gcpStorage.update(blobInfo)
