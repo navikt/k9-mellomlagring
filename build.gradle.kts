@@ -5,8 +5,8 @@ val dusseldorfKtorVersion = "2.1.6.2-6ce5eaa"
 val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
-val tikaVersion = "2.0.0"
-val gcpStorageVersion = "2.0.1"
+val tikaVersion = "2.1.0"
+val gcpStorageVersion = "2.1.0"
 val fuelVersion = "2.3.1"
 val mockKVersion = "1.12.0"
 val jsonassertVersion = "1.5.0"
@@ -15,7 +15,7 @@ val systemRulesVersion = "1.19.0"
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.5.30"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
