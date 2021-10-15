@@ -69,6 +69,9 @@ spec:
         - application: omsorgspengesoknad-prosessering
           namespace: {{namespace}}
           cluster: {{fss-cluster}}
+        - application: omsorgspengerutbetalingsoknad-prosessering
+          namespace: {{namespace}}
+          cluster: {{fss-cluster}}
     outbound:
       external:
         - host: login.microsoftonline.com
