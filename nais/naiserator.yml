@@ -60,6 +60,7 @@ spec:
         - application: omsorgsdager-melding-prosessering
         - application: omsorgsdager-aleneomsorg-prosessering
         - application: pleiepengesoknad-api
+        - application: pleiepenger-livets-sluttfase-api
         - application: k9-joark
           namespace: {{namespace}}
           cluster: {{fss-cluster}}
