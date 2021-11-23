@@ -206,11 +206,24 @@ private fun valider(
 ): Set<Violation> {
     logger.trace("Validerer dokumentet")
     val violations = dokument.valider()
-    if (!contentTypeService.isSupported(contentType = dokument.contentType!!, content = dokument.content!!)) {
+
+    if(dokument.content != null && dokument.contentType != null) {
+        if(!contentTypeService.isWhatItSeems(dokument.content, dokument.contentType)){
+            violations.add(
+                Violation(
+                    parameterName = HttpHeaders.ContentType,
+                    reason = "Mismatch mellom content og contentType",
+                    parameterType = ParameterType.HEADER
+                )
+            )
+        }
+    }
+
+    if (!contentTypeService.isSupportedContentType(contentType = dokument.contentType!!)) {
         violations.add(
             Violation(
                 parameterName = HttpHeaders.ContentType,
-                reason = "Ikke Supportert dokument med Content-Type ${dokument.contentType}",
+                reason = "Ikke supportert dokument med Content-Type ${dokument.contentType}. ",
                 parameterType = ParameterType.HEADER
             )
         )

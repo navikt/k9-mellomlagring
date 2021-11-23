@@ -30,7 +30,7 @@ class ContentTypeService {
         val parsedContentType = ContentType.parseOrNull(contentType) ?: throw IllegalArgumentException("Klarte ikke å parse ContentType=$contentType")
         val isWhatItSeems = isWhatItSeems(
             content = content,
-            seems = parsedContentType
+            contentType = contentType
         )
         return when (isWhatItSeems) {
             true ->  parsedContentType
@@ -38,31 +38,31 @@ class ContentTypeService {
         }
     }
 
-    fun isSupported(
-        contentType: String,
-        content: ByteArray
+    fun isSupportedContentType(
+        contentType: String
     ): Boolean {
         val parsedContentType = ContentType.parseOrNull(contentType) ?: return false
-        val supported = supportedContentTypes.contains(parsedContentType)
-        if (!supported) {
-            logger.error("Ikke støttet contentType: {}. Støttet contentType: {}", parsedContentType, supportedContentTypes)
-            return false
+
+        return when(supportedContentTypes.contains(parsedContentType)){
+            true -> true
+            false -> {
+                logger.error("Ikke støttet contentType: {}. Støttet contentType: {}", parsedContentType, supportedContentTypes)
+                false
+            }
         }
-        return isWhatItSeems(
-            content = content,
-            seems = parsedContentType
-        )
     }
 
 
-    private fun isWhatItSeems(
+    fun isWhatItSeems(
         content: ByteArray,
-        seems: ContentType
+        contentType: String
     ): Boolean {
+        val parsedContentType = ContentType.parseOrNull(contentType) ?: return false
+
         val detected = tika.detectOrNull(content) ?: return false
         val parsed = ContentType.parseOrNull(detected) ?: return false
 
-        if (PLAIN_TEXT == parsed && JSON == seems) {
+        if (PLAIN_TEXT == parsed && JSON == parsedContentType) {
             return try {
                 objectMapper.readTree(content)
                 true
@@ -72,7 +72,7 @@ class ContentTypeService {
             }
         }
 
-        return seems.toString().equals(tika.detectOrNull(content), ignoreCase = true)
+        return parsedContentType.toString().equals(tika.detectOrNull(content), ignoreCase = true)
     }
 }
 
