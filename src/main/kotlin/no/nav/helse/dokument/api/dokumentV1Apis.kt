@@ -213,6 +213,7 @@ private fun valider(
                 Violation(
                     parameterName = HttpHeaders.ContentType,
                     reason = "Mismatch mellom content og contentType",
+                    invalidValue = dokument.contentType,
                     parameterType = ParameterType.HEADER
                 )
             )
