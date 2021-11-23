@@ -200,7 +200,7 @@ internal fun Route.dokumentV1Apis(
     }
 }
 
-private fun valider(
+fun valider(
     contentTypeService: ContentTypeService,
     dokument: DokumentDto
 ): Set<Violation> {
@@ -224,7 +224,7 @@ private fun valider(
         violations.add(
             Violation(
                 parameterName = HttpHeaders.ContentType,
-                reason = "Ikke supportert dokument med Content-Type ${dokument.contentType}. ",
+                reason = "Støtter ikke dokument med Content-Type '${dokument.contentType}'. ",
                 parameterType = ParameterType.HEADER
             )
         )
@@ -275,7 +275,7 @@ private suspend fun ApplicationCall.respondCreatedDokument(baseUrl: String, doku
     respond(HttpStatusCode.Created, mapOf(Pair("id", dokumentId.id)))
 }
 
-internal data class DokumentDto(
+data class DokumentDto(
     val content: ByteArray?,
     @JsonAlias("contentType") val contentType: String?,
     val title: String?,
