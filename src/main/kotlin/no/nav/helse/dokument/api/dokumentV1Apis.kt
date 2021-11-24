@@ -200,17 +200,31 @@ internal fun Route.dokumentV1Apis(
     }
 }
 
-private fun valider(
+fun valider(
     contentTypeService: ContentTypeService,
     dokument: DokumentDto
 ): Set<Violation> {
     logger.trace("Validerer dokumentet")
     val violations = dokument.valider()
-    if (!contentTypeService.isSupported(contentType = dokument.contentType!!, content = dokument.content!!)) {
+
+    if(dokument.content != null && dokument.contentType != null) {
+        if(!contentTypeService.isWhatItSeems(dokument.content, dokument.contentType)){
+            violations.add(
+                Violation(
+                    parameterName = HttpHeaders.ContentType,
+                    reason = "Mismatch mellom content og contentType",
+                    invalidValue = dokument.contentType,
+                    parameterType = ParameterType.HEADER
+                )
+            )
+        }
+    }
+
+    if (!contentTypeService.isSupportedContentType(contentType = dokument.contentType!!)) {
         violations.add(
             Violation(
                 parameterName = HttpHeaders.ContentType,
-                reason = "Ikke Supportert dokument med Content-Type ${dokument.contentType}",
+                reason = "Støtter ikke dokument med Content-Type '${dokument.contentType}'. ",
                 parameterType = ParameterType.HEADER
             )
         )
@@ -261,7 +275,7 @@ private suspend fun ApplicationCall.respondCreatedDokument(baseUrl: String, doku
     respond(HttpStatusCode.Created, mapOf(Pair("id", dokumentId.id)))
 }
 
-internal data class DokumentDto(
+data class DokumentDto(
     val content: ByteArray?,
     @JsonAlias("contentType") val contentType: String?,
     val title: String?,
