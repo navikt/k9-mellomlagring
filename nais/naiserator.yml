@@ -60,15 +60,13 @@ spec:
         - application: omsorgspengerutbetaling-api
         - application: omsorgspengerutbetalingsoknad-prosessering
         - application: omsorgspengerutbetalingsoknad-arbeidstaker-api
+        - application: omsorgspengerutbetalingsoknad-arbeidstaker-prosessering
         - application: omsorgsdager-melding-prosessering
         - application: omsorgsdager-aleneomsorg-prosessering
         - application: pleiepengesoknad-api
         - application: pleiepenger-livets-sluttfase-api
         - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-joark
-          namespace: {{namespace}}
-          cluster: {{fss-cluster}}
-        - application: omsorgspengerutbetalingsoknad-arbeidstaker-prosessering
           namespace: {{namespace}}
           cluster: {{fss-cluster}}
     outbound:
