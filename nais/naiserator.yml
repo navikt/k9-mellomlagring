@@ -54,6 +54,7 @@ spec:
         - application: omsorgspenger-midlertidig-alene-prosessering
         - application: omsorgsdager-melding-api
         - application: omsorgspenger-api
+        - application: omsorgspengesoknad-prosessering
         - application: k9-ettersending-api
         - application: k9-ettersending-prosessering
         - application: omsorgspengerutbetaling-api
@@ -64,9 +65,6 @@ spec:
         - application: pleiepenger-livets-sluttfase-api
         - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-joark
-          namespace: {{namespace}}
-          cluster: {{fss-cluster}}
-        - application: omsorgspengesoknad-prosessering
           namespace: {{namespace}}
           cluster: {{fss-cluster}}
         - application: omsorgspengerutbetalingsoknad-prosessering
