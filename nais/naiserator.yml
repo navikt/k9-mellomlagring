@@ -81,8 +81,8 @@ spec:
         - application: pleiepengesoknad-api
         - application: pleiepengesoknad-prosessering
         - application: pleiepengesoknad-prosessering
-        - namespace: {{namespace}}
-        - cluster: {{fss-cluster}}
+          namespace: {{namespace}}
+          cluster: {{fss-cluster}}
         - application: pleiepenger-livets-sluttfase-api
         - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-joark
