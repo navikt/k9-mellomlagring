@@ -80,6 +80,7 @@ spec:
         - application: omsorgsdager-aleneomsorg-prosessering
         - application: pleiepengesoknad-api
         - application: pleiepengesoknad-prosessering
+        - application: pleiepengesoknad-prosessering
         - namespace: {{namespace}}
         - cluster: {{fss-cluster}}
         - application: pleiepenger-livets-sluttfase-api
