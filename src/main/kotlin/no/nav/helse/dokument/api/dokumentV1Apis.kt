@@ -58,11 +58,7 @@ internal fun Route.dokumentV1Apis(
                 eier = eier,
                 medHold = true
             )
-            idToken.issuerIsLoginservice() -> dokumentService.lagreDokument(
-                dokument = dokument.tilDokument(),
-                eier = eier
-            )
-            idToken.issuerIsTokendings() -> dokumentService.lagreDokument(
+            idToken.issuerIsLoginservice() ||idToken.issuerIsTokendings() -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier
             )
