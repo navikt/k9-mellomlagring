@@ -68,9 +68,7 @@ fun Application.k9Mellomlagring() {
         virusScanner = getVirusScanner(configuration)
     )
 
-    val eierResolver = EierResolver(
-        issuers = configuration.issuers()
-    )
+    val eierResolver = EierResolver()
 
     val contentTypeService = ContentTypeService()
 

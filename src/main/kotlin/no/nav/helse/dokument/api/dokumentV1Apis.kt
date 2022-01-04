@@ -2,8 +2,6 @@ package no.nav.helse.dokument.api
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -15,6 +13,7 @@ import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver
 import no.nav.helse.dusseldorf.ktor.auth.ClaimRule
 import no.nav.helse.dusseldorf.ktor.auth.Issuer
+import no.nav.helse.dusseldorf.ktor.auth.idToken
 import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -48,22 +47,26 @@ internal fun Route.dokumentV1Apis(
             throw Throwblem(ValidationProblemDetails(violations))
         }
 
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val idToken = call.idToken()
 
         logger.trace("Dokument hentet fra reqeusten, forsøker å lagre")
-        val eier = eierResolver.hentEier(principal, dokument.eier!!.eiersFødselsnummer)
+        val eier = eierResolver.hentEier(idToken, dokument.eier!!.eiersFødselsnummer)
 
-        val dokumentId = when (val issuer = principal.payload.issuer) {
-            azureV1Issuer, azureV2Issuer -> dokumentService.lagreDokument(
+        val dokumentId = when {
+            idToken.issuerIsAzure() -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier,
                 medHold = true
             )
-            loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.lagreDokument(
+            idToken.issuerIsLoginservice() -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier
             )
-            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+            idToken.issuerIsTokendings() -> dokumentService.lagreDokument(
+                dokument = dokument.tilDokument(),
+                eier = eier
+            )
+            else -> throw IllegalArgumentException("Ikke støttet issuer ${idToken.issuer()}")
         }
 
         logger.info("Dokument lagret med id: {}", dokumentId)
@@ -79,11 +82,11 @@ internal fun Route.dokumentV1Apis(
 
         logger.trace("EtterspurtJson=$etterspurtJson")
 
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val idToken = call.idToken()
 
         val dokument = dokumentService.hentDokument(
             dokumentId = call.dokumentId(),
-            eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+            eier = eierResolver.hentEier(idToken, dokumentEier.eiersFødselsnummer)
         )
 
         logger.trace("FantDokment=${dokument != null}")
@@ -113,19 +116,15 @@ internal fun Route.dokumentV1Apis(
         val dokumentEier = call.dokumentEier()
         logger.info("Sletter dokument med id: {}", dokumentId)
 
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val idToken = call.idToken()
+        val eier = eierResolver.hentEier(idToken, dokumentEier.eiersFødselsnummer)
 
-        val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+        val result = dokumentService.slettDokument(
+            dokumentId = dokumentId,
+            eier = eier
+        )
 
-        val result = when (val issuer = principal.payload.issuer) {
-            azureV1Issuer, azureV2Issuer, loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.slettDokument(
-                dokumentId = dokumentId,
-                eier = eier
-            )
-            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
-        }
-
-        when(result) {
+        when (result) {
             true -> {
                 logger.info("Dokument med id slettet: {}", dokumentId)
                 call.respond(HttpStatusCode.NoContent)
@@ -142,16 +141,13 @@ internal fun Route.dokumentV1Apis(
         val dokumentEier = call.dokumentEier()
         logger.info("Sletter hold på persistert dokument med id: {}", dokumentId)
 
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
-        val eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+        val idToken = call.idToken()
+        val eier = eierResolver.hentEier(idToken, dokumentEier.eiersFødselsnummer)
 
-       val resultat = when (val issuer = principal.payload.issuer) {
-            azureV1Issuer, azureV2Issuer, loginServiceV1Issuer, loginServiceV2Issuer -> dokumentService.fjerneHoldPåPersistertDokument(
-                dokumentId = dokumentId,
-                eier = eier
-            )
-            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
-        }
+        val resultat = dokumentService.fjerneHoldPåPersistertDokument(
+            dokumentId = dokumentId,
+            eier = eier
+        )
 
         when (resultat) {
             true -> {
@@ -168,10 +164,9 @@ internal fun Route.dokumentV1Apis(
     }
 
     put("$BASE_PATH/{dokumentId}/persister") {
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
-        val issuer = principal.payload.issuer
-        if (issuer == loginServiceV1Issuer || issuer == loginServiceV2Issuer) {
-            call.respondForbiddenAccess(issuer)
+        val idToken = call.idToken()
+        if (idToken.issuerIsLoginservice() || idToken.issuerIsTokendings()) {
+            call.respondForbiddenAccess(idToken.issuer())
             return@put
         }
 
@@ -179,12 +174,12 @@ internal fun Route.dokumentV1Apis(
         val dokumentEier = call.dokumentEier()
         logger.info("Persisterer dokument med id: {}", dokumentId)
 
-        val result = when (issuer) {
-            azureV1Issuer, azureV2Issuer -> dokumentService.persister(
+        val result = when {
+            idToken.issuerIsAzure() -> dokumentService.persister(
                 dokumentId = dokumentId,
-                eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+                eier = eierResolver.hentEier(idToken, dokumentEier.eiersFødselsnummer)
             )
-            else -> throw IllegalArgumentException("Ikke støttet issuer $issuer")
+            else -> throw IllegalArgumentException("Ikke støttet issuer ${idToken.issuer()}")
         }
 
         when (result) {
@@ -207,8 +202,8 @@ fun valider(
     logger.trace("Validerer dokumentet")
     val violations = dokument.valider()
 
-    if(dokument.content != null && dokument.contentType != null) {
-        if(!contentTypeService.isWhatItSeems(dokument.content, dokument.contentType)){
+    if (dokument.content != null && dokument.contentType != null) {
+        if (!contentTypeService.isWhatItSeems(dokument.content, dokument.contentType)) {
             violations.add(
                 Violation(
                     parameterName = HttpHeaders.ContentType,

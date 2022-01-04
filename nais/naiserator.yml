@@ -38,6 +38,8 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
+  tokenx:
+    enabled: true
   azure:
     application:
       enabled: true

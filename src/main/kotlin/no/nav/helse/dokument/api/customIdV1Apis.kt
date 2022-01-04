@@ -1,8 +1,6 @@
 package no.nav.helse.dokument.api
 
 import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -13,6 +11,7 @@ import io.ktor.util.*
 import no.nav.helse.dokument.Dokument
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver
+import no.nav.helse.dusseldorf.ktor.auth.idToken
 import no.nav.helse.dusseldorf.ktor.core.Throwblem
 import no.nav.helse.dusseldorf.ktor.core.ValidationProblemDetails
 import org.slf4j.Logger
@@ -41,13 +40,13 @@ internal fun Route.customIdV1Apis(
             contentType = dokument.contentType,
             content = dokument.content
         )
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val idToken = call.idToken()
         when (contentType) {
             ContentTypeService.JSON -> {
                 dokumentService.lagreDokument(
                     customDokumentId = customDokumentId,
                     dokument = dokument,
-                    eier = eierResolver.hentEier(principal, dokument.eier.eiersFødselsnummer)
+                    eier = eierResolver.hentEier(idToken, dokument.eier.eiersFødselsnummer)
                 )
                 call.respond(HttpStatusCode.NoContent)
             }
@@ -62,10 +61,10 @@ internal fun Route.customIdV1Apis(
         logger.info("Henter dokument for CustomDokumentId=${customDokumentId.id}")
 
         val dokumentEier = call.dokumentEier()
-        val principal: JWTPrincipal = call.principal() ?: throw IllegalStateException("Principal ikke satt.")
+        val idToken = call.idToken()
         val dokument = dokumentService.hentDokument(
             customDokumentId = customDokumentId,
-            eier = eierResolver.hentEier(principal, dokumentEier.eiersFødselsnummer)
+            eier = eierResolver.hentEier(idToken, dokumentEier.eiersFødselsnummer)
         )
 
         when {
