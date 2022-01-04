@@ -3,7 +3,6 @@ package no.nav.helse
 import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.helse.dusseldorf.testsupport.jws.LoginService
 import no.nav.helse.dusseldorf.testsupport.jws.Tokendings
-import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV1WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getLoginServiceV1WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getTokendingsWellKnownUrl
@@ -40,22 +39,15 @@ internal object TestConfiguration {
             map["nav.auth.issuers.1.audience"] = LoginService.V1_0.getAudience()
 
             map["nav.auth.issuers.2.type"] = "azure"
-            map["nav.auth.issuers.2.alias"] = "azure-v1"
-            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getAzureV1WellKnownUrl()
+            map["nav.auth.issuers.2.alias"] = "azure-v2"
+            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
             map["nav.auth.issuers.2.audience"] = k9MellomlagringAzureClientId
             map["nav.auth.issuers.2.azure.require_certificate_client_authentication"] = "false"
             map["nav.auth.issuers.2.azure.required_roles"] = "access_as_application"
 
-            map["nav.auth.issuers.3.type"] = "azure"
-            map["nav.auth.issuers.3.alias"] = "azure-v2"
-            map["nav.auth.issuers.3.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
-            map["nav.auth.issuers.3.audience"] = k9MellomlagringAzureClientId
-            map["nav.auth.issuers.3.azure.require_certificate_client_authentication"] = "false"
-            map["nav.auth.issuers.3.azure.required_roles"] = "access_as_application"
-
-            map["nav.auth.issuers.4.alias"] = "tokenx"
-            map["nav.auth.issuers.4.discovery_endpoint"] = wireMockServer.getTokendingsWellKnownUrl()
-            map["nav.auth.issuers.4.audience"] = Tokendings.getAudience()
+            map["nav.auth.issuers.3.alias"] = "tokenx"
+            map["nav.auth.issuers.3.discovery_endpoint"] = wireMockServer.getTokendingsWellKnownUrl()
+            map["nav.auth.issuers.3.audience"] = Tokendings.getAudience()
         }
 
         map["nav.local_or_test"] = "true"
