@@ -11,8 +11,6 @@ import no.nav.helse.dokument.DokumentEier
 import no.nav.helse.dokument.DokumentId
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver
-import no.nav.helse.dusseldorf.ktor.auth.ClaimRule
-import no.nav.helse.dusseldorf.ktor.auth.Issuer
 import no.nav.helse.dusseldorf.ktor.auth.idToken
 import no.nav.helse.dusseldorf.ktor.core.*
 import org.slf4j.Logger
@@ -30,13 +28,8 @@ internal fun Route.dokumentV1Apis(
     dokumentService: DokumentService,
     eierResolver: EierResolver,
     contentTypeService: ContentTypeService,
-    baseUrl: String,
-    issuers: Map<Issuer, Set<ClaimRule>>
+    baseUrl: String
 ) {
-    val azureV1Issuer = issuers.filterKeys { it.alias() == "azure-v1" }.entries.first().key.issuer()
-    val azureV2Issuer = issuers.filterKeys { it.alias() == "azure-v2" }.entries.first().key.issuer()
-    val loginServiceV1Issuer = issuers.filterKeys { it.alias() == "login-service-v1" }.entries.first().key.issuer()
-    val loginServiceV2Issuer = issuers.filterKeys { it.alias() == "login-service-v2" }.entries.first().key.issuer()
 
     post(BASE_PATH) {
         logger.info("Lagrer dokument")
