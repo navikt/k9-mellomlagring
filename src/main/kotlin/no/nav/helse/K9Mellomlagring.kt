@@ -68,9 +68,7 @@ fun Application.k9Mellomlagring() {
         virusScanner = getVirusScanner(configuration)
     )
 
-    val eierResolver = EierResolver(
-        issuers = configuration.issuers()
-    )
+    val eierResolver = EierResolver()
 
     val contentTypeService = ContentTypeService()
 
@@ -81,8 +79,7 @@ fun Application.k9Mellomlagring() {
                     dokumentService = dokumentService,
                     eierResolver = eierResolver,
                     contentTypeService = contentTypeService,
-                    baseUrl = configuration.getBaseUrl(),
-                    issuers = issuers
+                    baseUrl = configuration.getBaseUrl()
                 )
                 customIdV1Apis(
                     dokumentService = dokumentService,
