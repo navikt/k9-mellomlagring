@@ -113,6 +113,7 @@ class GcpStorageBucket(
             gcpStorage.writer(blobInfo).use { writer -> writer.write(ByteBuffer.wrap(content, 0, content.size)) }
         } catch (ex: StorageException) {
             logger.error("Feilet med å lagre dokument med id: ${blobInfo.blobId.name}", ex)
+            throw Exception("Feilet med å lagre dokument med id: ${blobInfo.blobId.name}. Exception: $ex")
         }
     }
 
