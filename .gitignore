@@ -6,4 +6,4 @@
 *.ipr
 *.iws
 .DS_Store
-/travis/helseci.key
+/travis/helseci.keyresources/
