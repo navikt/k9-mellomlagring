@@ -55,7 +55,6 @@ spec:
       rules:
         - application: omsorgspenger-midlertidig-alene-prosessering
         - application: omsorgsdager-melding-api
-        - application: omsorgspenger-api
         - application: omsorgspengesoknad-prosessering
         - application: k9-ettersending-api
         - application: k9-ettersending-prosessering
