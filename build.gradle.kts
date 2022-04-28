@@ -6,7 +6,7 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.3.0"
-val gcpStorageVersion = "2.4.5"
+val gcpStorageVersion = "2.6.1"
 val fuelVersion = "2.3.1"
 val mockKVersion = "1.12.3"
 val jsonassertVersion = "1.5.0"
@@ -15,7 +15,7 @@ val systemRulesVersion = "1.19.0"
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -74,17 +74,17 @@ repositories {
 
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.withType<ShadowJar> {
@@ -100,7 +100,7 @@ tasks.withType<ShadowJar> {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "7.2"
+    gradleVersion = "7.4.2"
 }
 
 tasks.withType<Test> {
