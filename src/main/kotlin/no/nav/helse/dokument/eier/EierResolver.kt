@@ -13,6 +13,7 @@ internal class EierResolver {
         return when {
             idToken.issuerIsAzure() -> Eier(eiersFødselsnummer)
             idToken.issuerIsLoginservice() -> hentEierFraClaim(idToken, eiersFødselsnummer)
+            idToken.issuerIsIDPorten() -> hentEierFraClaim(idToken, eiersFødselsnummer)
             idToken.issuerIsTokendings() -> hentEierFraClaim(idToken, eiersFødselsnummer)
             else -> throw IllegalArgumentException("Ikke støttet issuer ${idToken.issuer()}")
         }
