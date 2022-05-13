@@ -40,7 +40,6 @@ internal object TestConfiguration {
             map["no.nav.security.jwt.issuers.1.issuer_name"] = "login-service"
             map["no.nav.security.jwt.issuers.1.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("login-service")}"
             map["no.nav.security.jwt.issuers.1.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
-            map["no.nav.security.jwt.issuers.1.cookie_name"] = "selvbetjening-idtoken"
 
             map["no.nav.security.jwt.issuers.2.issuer_name"] = "azure"
             map["no.nav.security.jwt.issuers.2.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("azure")}"
