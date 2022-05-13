@@ -21,6 +21,15 @@ internal fun WireMockServer.stubVirusScan() : WireMockServer {
                     .withHeader("Content-Type", "application/json")
                     .withStatus(200)
                     .withTransformers("virus-scan")
+                    .withBody(
+                        """
+                        [
+                            {
+                                "Result" : "OK"
+                            }
+                        ]
+                    """.trimIndent()
+                    )
             )
     )
     return this

@@ -3,6 +3,7 @@ package no.nav.helse
 import io.ktor.server.testing.withApplication
 import no.nav.helse.dusseldorf.testsupport.asArguments
 import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
+import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -13,7 +14,7 @@ class K9MellomlagringWithMocks {
 
         @JvmStatic
         fun main(args: Array<String>) {
-
+            val mockOAuth2Server = MockOAuth2Server()
             val wireMockServer = WireMockBuilder()
                 .withPort(8131)
                 .withLoginServiceSupport()
@@ -24,7 +25,8 @@ class K9MellomlagringWithMocks {
 
             val testArgs = TestConfiguration.asMap(
                 wireMockServer = wireMockServer,
-                port = 8132
+                port = 8132,
+                mockOAuth2Server = mockOAuth2Server
             ).asArguments()
 
             Runtime.getRuntime().addShutdownHook(object : Thread() {
