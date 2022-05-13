@@ -67,7 +67,7 @@ fun Application.k9Mellomlagring() {
                     config = config,
                     requiredClaims = RequiredClaims(
                         issuer = issuer,
-                        claimMap = arrayOf("role=access_as_application")
+                        claimMap = arrayOf("roles=access_as_application")
                     )
                 )
             }
