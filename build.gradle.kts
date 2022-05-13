@@ -11,6 +11,8 @@ val fuelVersion = "2.3.1"
 val mockKVersion = "1.12.4"
 val jsonassertVersion = "1.5.0"
 val systemRulesVersion = "1.19.0"
+val tokenSupportVersion = "2.0.19"
+val mockOauth2ServerVersion = "0.4.6"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
@@ -35,6 +37,9 @@ dependencies {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
     }
 
+    // Token validation
+    implementation ("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+
     // Client
     implementation ( "no.nav.helse:dusseldorf-ktor-client:$dusseldorfKtorVersion")
 
@@ -46,6 +51,7 @@ dependencies {
     implementation("org.apache.tika:tika-core:$tikaVersion")
 
     // Test
+    testImplementation ("no.nav.security:mock-oauth2-server:$mockOauth2ServerVersion")
     testImplementation ( "no.nav.helse:dusseldorf-test-support:$dusseldorfKtorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")

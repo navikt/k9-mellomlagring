@@ -19,6 +19,7 @@ import no.nav.helse.dokument.eier.EierResolver
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.allIssuers
+import no.nav.helse.dusseldorf.ktor.auth.idToken
 import no.nav.helse.dusseldorf.ktor.auth.multipleJwtIssuers
 import no.nav.helse.dusseldorf.ktor.core.*
 import no.nav.helse.dusseldorf.ktor.health.*
@@ -26,6 +27,9 @@ import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.helse.dusseldorf.ktor.metrics.init
+import no.nav.security.token.support.ktor.RequiredClaims
+import no.nav.security.token.support.ktor.asIssuerProps
+import no.nav.security.token.support.ktor.tokenValidationSupport
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -35,12 +39,39 @@ fun Application.k9Mellomlagring() {
     val appId = environment.config.id()
     logProxyProperties()
     DefaultExports.initialize()
+    val logger = LoggerFactory.getLogger("no.nav.k9.k9Mellomlagring")
 
-    val configuration = Configuration(environment.config)
-    val issuers = configuration.issuers()
+
+    val config = environment.config
+    val allIssuers = config.asIssuerProps().keys
+    val configuration = Configuration(config)
 
     install(Authentication) {
-        multipleJwtIssuers(issuers)
+        allIssuers
+            .filterNot { it == "azure" }
+            .forEach { issuer: String ->
+                tokenValidationSupport(
+                    name = issuer,
+                    config = config,
+                    requiredClaims = RequiredClaims(
+                        issuer = issuer,
+                        claimMap = arrayOf("acr=Level4")
+                    )
+                )
+            }
+
+        allIssuers
+            .filter { it == "azure" }
+            .forEach { issuer: String ->
+                tokenValidationSupport(
+                    name = issuer,
+                    config = config,
+                    requiredClaims = RequiredClaims(
+                        issuer = issuer,
+                        claimMap = arrayOf("role=access_as_application")
+                    )
+                )
+            }
     }
 
     install(ContentNegotiation) {
@@ -73,7 +104,7 @@ fun Application.k9Mellomlagring() {
     val contentTypeService = ContentTypeService()
 
     install(Routing) {
-        authenticate(*issuers.allIssuers()) {
+        authenticate(*allIssuers.toTypedArray()) {
             requiresCallId {
                 dokumentV1Apis(
                     dokumentService = dokumentService,
@@ -118,6 +149,15 @@ fun Application.k9Mellomlagring() {
     install(CallLogging) {
         correlationIdAndRequestIdInMdc()
         logRequests()
+        mdc("id_token_jti") { call ->
+            try {
+                val idToken = call.idToken()
+                logger.info("Issuer [{}]", idToken.issuer())
+                idToken.getId()
+            } catch (cause: Throwable) {
+                null
+            }
+        }
     }
 }
 
