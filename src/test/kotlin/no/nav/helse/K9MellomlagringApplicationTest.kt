@@ -32,7 +32,13 @@ class K9MellomlagringApplicationTest {
             .build()
             .stubVirusScan()
 
-        private val tokenXToken = mockOAuth2Server.issueToken(fnr = "02119970078")
+        private val tokenXToken = mockOAuth2Server.issueToken(
+            issuerId = "tokendings",
+            audience = "dev-gcp:dusseldorf:k9-mellomlagring",
+            claims = mapOf("acr" to "Level4"),
+            subject = "02119970078"
+        ).serialize()
+
         private val azureToken = mockOAuth2Server.issueToken(
             issuerId = "azure",
             audience = "dev-gcp:dusseldorf:k9-mellomlagring",
@@ -158,21 +164,5 @@ class K9MellomlagringApplicationTest {
                 assertEquals(HttpStatusCode.NoContent, response.status())
             }
         }
-    }
-}
-
-fun MockOAuth2Server.issueToken(
-    fnr: String,
-    issuerId: String = "tokendings",
-    audience: String = "dev-gcp:dusseldorf:k9-mellomlagring",
-    claims: Map<String, String> = mapOf("acr" to "Level4"),
-    cookieName: String = "selvbetjening-idtoken",
-    somCookie: Boolean = false,
-): String {
-    val jwtToken =
-        issueToken(issuerId = issuerId, subject = fnr, audience = audience, claims = claims).serialize()
-    return when (somCookie) {
-        false -> jwtToken
-        true -> "$cookieName=$jwtToken"
     }
 }
