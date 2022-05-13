@@ -6,6 +6,7 @@ import no.nav.helse.dusseldorf.testsupport.jws.Tokendings
 import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getLoginServiceV1WellKnownUrl
 import no.nav.helse.dusseldorf.testsupport.wiremock.getTokendingsWellKnownUrl
+import no.nav.security.mock.oauth2.MockOAuth2Server
 
 internal object TestConfiguration {
 
@@ -16,7 +17,8 @@ internal object TestConfiguration {
         passphrase1: String = "password",
         passphrase2: String = "oldpassword",
         passphrase3: String = "reallyoldpassword",
-        k9MellomlagringAzureClientId: String = "k9-mellomlagring"
+        k9MellomlagringAzureClientId: String = "k9-mellomlagring",
+        mockOAuth2Server: MockOAuth2Server
     ): Map<String, String> {
         val map = mutableMapOf(
             Pair("ktor.deployment.port", "$port"),
@@ -31,23 +33,18 @@ internal object TestConfiguration {
 
         // Issuers
         if (wireMockServer != null) {
-            map["nav.auth.issuers.0.alias"] = "login-service-v1"
-            map["nav.auth.issuers.0.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
+            map["no.nav.security.jwt.issuers.0.issuer_name"] = "tokendings"
+            map["no.nav.security.jwt.issuers.0.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("tokendings")}"
+            map["no.nav.security.jwt.issuers.0.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
 
-            map["nav.auth.issuers.1.alias"] = "login-service-v2"
-            map["nav.auth.issuers.1.discovery_endpoint"] = wireMockServer.getLoginServiceV1WellKnownUrl()
-            map["nav.auth.issuers.1.audience"] = LoginService.V1_0.getAudience()
+            map["no.nav.security.jwt.issuers.1.issuer_name"] = "login-service"
+            map["no.nav.security.jwt.issuers.1.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("login-service")}"
+            map["no.nav.security.jwt.issuers.1.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
+            map["no.nav.security.jwt.issuers.1.cookie_name"] = "selvbetjening-idtoken"
 
-            map["nav.auth.issuers.2.type"] = "azure"
-            map["nav.auth.issuers.2.alias"] = "azure-v2"
-            map["nav.auth.issuers.2.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
-            map["nav.auth.issuers.2.audience"] = k9MellomlagringAzureClientId
-            map["nav.auth.issuers.2.azure.require_certificate_client_authentication"] = "false"
-            map["nav.auth.issuers.2.azure.required_roles"] = "access_as_application"
-
-            map["nav.auth.issuers.3.alias"] = "tokenx"
-            map["nav.auth.issuers.3.discovery_endpoint"] = wireMockServer.getTokendingsWellKnownUrl()
-            map["nav.auth.issuers.3.audience"] = Tokendings.getAudience()
+            map["no.nav.security.jwt.issuers.2.issuer_name"] = "azure"
+            map["no.nav.security.jwt.issuers.2.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("azure")}"
+            map["no.nav.security.jwt.issuers.2.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
         }
 
         map["nav.local_or_test"] = "true"
