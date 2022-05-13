@@ -41,7 +41,6 @@ fun Application.k9Mellomlagring() {
     DefaultExports.initialize()
     val logger = LoggerFactory.getLogger("no.nav.k9.k9Mellomlagring")
 
-
     val config = environment.config
     val allIssuers = config.asIssuerProps().keys
     val configuration = Configuration(config)
