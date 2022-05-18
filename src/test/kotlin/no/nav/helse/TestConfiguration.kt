@@ -17,7 +17,6 @@ internal object TestConfiguration {
         passphrase1: String = "password",
         passphrase2: String = "oldpassword",
         passphrase3: String = "reallyoldpassword",
-        k9MellomlagringAzureClientId: String = "k9-mellomlagring",
         mockOAuth2Server: MockOAuth2Server
     ): Map<String, String> {
         val map = mutableMapOf(
