@@ -70,6 +70,7 @@ spec:
         - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-brukerdialog-api
         - application: k9-joark
+        - application: k9-joark
           namespace: {{namespace}}
           cluster: {{fss-cluster}}
     outbound:
