@@ -1,11 +1,11 @@
 package no.nav.helse.dokument.api
 
 import com.fasterxml.jackson.annotation.JsonAlias
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import no.nav.helse.dokument.Dokument
 import no.nav.helse.dokument.DokumentEier
 import no.nav.helse.dokument.DokumentId
@@ -51,7 +51,7 @@ internal fun Route.dokumentV1Apis(
                 eier = eier,
                 medHold = true
             )
-            idToken.issuerIsLoginservice() ||idToken.issuerIsTokendings() || idToken.issuerIsIDPorten() -> dokumentService.lagreDokument(
+            idToken.issuerIsLoginservice() || idToken.issuerIsTokendings() || idToken.issuerIsIDPorten() -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier
             )
@@ -254,7 +254,9 @@ private suspend fun ApplicationCall.respondForbiddenAccess(issuer: String) {
 }
 
 private suspend fun ApplicationCall.respondCreatedDokument(baseUrl: String, dokumentId: DokumentId) {
-    val url = URLBuilder(baseUrl).path(BASE_PATH, dokumentId.id).build().toString()
+    val urlBuilder = URLBuilder(baseUrl)
+    urlBuilder.path(BASE_PATH, dokumentId.id)
+    val url = urlBuilder.build().toString()
     response.header(HttpHeaders.Location, url)
     respond(HttpStatusCode.Created, mapOf(Pair("id", dokumentId.id)))
 }

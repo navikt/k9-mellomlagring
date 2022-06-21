@@ -1,12 +1,10 @@
 package no.nav.helse
 
 import com.google.cloud.storage.StorageOptions
-import io.ktor.config.*
-import io.ktor.util.*
+import io.ktor.server.config.*
 import no.nav.helse.dokument.storage.GcpStorageBucket
 import no.nav.helse.dokument.storage.InMemoryStorage
 import no.nav.helse.dokument.storage.Storage
-import no.nav.helse.dusseldorf.ktor.auth.*
 import no.nav.helse.dusseldorf.ktor.core.getOptionalList
 import no.nav.helse.dusseldorf.ktor.core.getOptionalString
 import no.nav.helse.dusseldorf.ktor.core.getRequiredString
