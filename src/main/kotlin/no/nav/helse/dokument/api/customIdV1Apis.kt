@@ -1,13 +1,11 @@
 package no.nav.helse.dokument.api
 
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.put
-import io.ktor.util.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.util.*
 import no.nav.helse.dokument.Dokument
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver

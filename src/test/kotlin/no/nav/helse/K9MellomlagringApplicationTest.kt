@@ -1,9 +1,8 @@
 package no.nav.helse
 
-import com.google.gson.JsonObject
 import com.typesafe.config.ConfigFactory
-import io.ktor.config.*
 import io.ktor.http.*
+import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import io.prometheus.client.CollectorRegistry
 import no.nav.helse.dusseldorf.ktor.core.fromResources
@@ -12,10 +11,10 @@ import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import kotlin.test.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class K9MellomlagringApplicationTest {
