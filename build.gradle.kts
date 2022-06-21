@@ -1,28 +1,28 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "3.1.6.8-403f37e"
+val dusseldorfKtorVersion = "3.2.0.2-b18c5fe"
 val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
-val tikaVersion = "2.4.0"
-val gcpStorageVersion = "2.7.1"
+val tikaVersion = "2.4.1"
+val gcpStorageVersion = "2.8.1"
 val fuelVersion = "2.3.1"
 val mockKVersion = "1.12.4"
 val jsonassertVersion = "1.5.0"
 val systemRulesVersion = "1.19.0"
-val tokenSupportVersion = "2.0.20"
-val mockOauth2ServerVersion = "0.4.8"
+val tokenSupportVersion = "2.1.0"
+val mockOauth2ServerVersion = "0.5.1"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 buildscript {
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/403f37edd378c9dfc8ef7da83af04eebb0458bdc/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/b18c5feeca2840e6812eb805d50937d7aa0aca6a/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
@@ -38,7 +38,7 @@ dependencies {
     }
 
     // Token validation
-    implementation ("no.nav.security:token-validation-ktor:$tokenSupportVersion")
+    implementation ("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
 
     // Lagring
     implementation("com.google.cloud:google-cloud-storage:$gcpStorageVersion")
@@ -60,8 +60,6 @@ dependencies {
 }
 
 repositories {
-    mavenLocal()
-
     maven {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
