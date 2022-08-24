@@ -1,14 +1,14 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "3.2.0.2-b18c5fe"
+val dusseldorfKtorVersion = "3.2.1.0-e8f86c1"
 val ktorVersion = ext.get("ktorVersion").toString()
 val slf4jVersion = ext.get("slf4jVersion").toString()
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.4.1"
 val gcpStorageVersion = "2.11.3"
 val fuelVersion = "2.3.1"
-val mockKVersion = "1.12.4"
+val mockKVersion = "1.12.7"
 val jsonassertVersion = "1.5.1"
 val systemRulesVersion = "1.19.0"
 val tokenSupportVersion = "2.1.3"
@@ -17,12 +17,12 @@ val mockOauth2ServerVersion = "0.5.1"
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 buildscript {
-    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/b18c5feeca2840e6812eb805d50937d7aa0aca6a/gradle/dusseldorf-ktor.gradle.kts")
+    apply("https://raw.githubusercontent.com/navikt/dusseldorf-ktor/e8f86c13382be0a23ba46e99ec62d710db654893/gradle/dusseldorf-ktor.gradle.kts")
 }
 
 dependencies {
