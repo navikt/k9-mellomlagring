@@ -8,7 +8,7 @@ val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.4.1"
 val gcpStorageVersion = "2.11.3"
 val fuelVersion = "2.3.1"
-val mockKVersion = "1.12.4"
+val mockKVersion = "1.12.7"
 val jsonassertVersion = "1.5.1"
 val systemRulesVersion = "1.19.0"
 val tokenSupportVersion = "2.1.3"
@@ -17,7 +17,7 @@ val mockOauth2ServerVersion = "0.5.1"
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
