@@ -27,10 +27,6 @@ spec:
     requests:
       cpu: 50m
       memory: 512Mi
-  ingresses:
-  {{#each ingresses as |url|}}
-     - {{url}}
-  {{/each}}
   replicas:
     min: {{minReplicas}}
     max: {{maxReplicas}}
@@ -49,18 +45,14 @@ spec:
       - name: {{ bucket.name }}
         lifecycleCondition:
           age: {{ bucket.objectAge }}
-
   accessPolicy:
     inbound:
       rules:
         - application: omsorgspenger-midlertidig-alene-prosessering
         - application: omsorgsdager-melding-api
         - application: omsorgspengesoknad-prosessering
-        - application: k9-ettersending-api
         - application: k9-ettersending-prosessering
-        - application: omsorgspengerutbetaling-api
         - application: omsorgspengerutbetalingsoknad-prosessering
-        - application: omsorgspengerutbetalingsoknad-arbeidstaker-api
         - application: omsorgspengerutbetalingsoknad-arbeidstaker-prosessering
         - application: omsorgsdager-melding-prosessering
         - application: omsorgsdager-aleneomsorg-prosessering
@@ -70,9 +62,6 @@ spec:
         - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-brukerdialog-api
         - application: k9-joark
-        - application: k9-joark
-          namespace: {{namespace}}
-          cluster: {{fss-cluster}}
     outbound:
       external:
         - host: login.microsoftonline.com

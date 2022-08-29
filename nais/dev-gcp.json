@@ -5,11 +5,7 @@
   "team": "dusseldorf",
   "minReplicas": "1",
   "maxReplicas": "2",
-  "ingresses": [
-    "https://k9-mellomlagring.dev.intern.nav.no"
-  ],
   "azureTenant": "trygdeetaten.no",
-  "fss-cluster": "dev-fss",
   "bucket": {
     "name": "k9-mellomlagring",
     "objectAge": "3"

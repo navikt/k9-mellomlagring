@@ -2,8 +2,7 @@
 
 ## Tilgang
 
-### Requests fra FSS
-- Tillater requester fra alle applikasjoner som ligger under `preauthorizedApps` i dev-gcp.json og prod-gcp.json.
+### Requests fra GCP
+- Bruker service-discovery og tillater requester fra alle applikasjoner som ligger under `accessPolicy.inbound.rules` i naiserator.yml.
+  Applikasjoner som kaller denne tjenesten må legge k9-mellomlagring inn i deres `accessPolicy.outbound.rules` 
 
-## Requests fra SBS
-- Trenger ingen tilganger. Bruker innlogget brukers ID-token gjennom `login-service`.
