@@ -11,7 +11,7 @@ val fuelVersion = "2.3.1"
 val mockKVersion = "1.12.7"
 val jsonassertVersion = "1.5.1"
 val systemRulesVersion = "1.19.0"
-val tokenSupportVersion = "2.1.4"
+val tokenSupportVersion = "2.1.5"
 val mockOauth2ServerVersion = "0.5.1"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
