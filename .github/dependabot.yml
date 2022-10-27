@@ -20,3 +20,8 @@ updates:
       interval: daily
     registries:
       - dusseldorf-ktor
+
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
