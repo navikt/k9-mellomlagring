@@ -7,12 +7,8 @@ import no.nav.helse.dokument.*
 import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.eier.Eier
 import no.nav.helse.dokument.storage.InMemoryStorage
-import no.nav.helse.dokument.storage.Storage
-import no.nav.helse.dokument.storage.StorageKey
-import no.nav.helse.dokument.storage.StorageValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
