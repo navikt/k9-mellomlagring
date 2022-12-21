@@ -19,6 +19,8 @@ val mainClass = "no.nav.helse.K9MellomlagringKt"
 plugins {
     kotlin("jvm") version "1.7.22"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.sonarqube") version "3.3"
+    jacoco
 }
 
 dependencies {
@@ -102,4 +104,23 @@ tasks.withType<Wrapper> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_k9-mellomlagring")
+        property("sonar.organization", "navikt")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.sourceEncoding", "UTF-8")
+    }
 }
