@@ -54,7 +54,6 @@ spec:
         - application: k9-ettersending-prosessering
         - application: omsorgspengerutbetalingsoknad-prosessering
         - application: omsorgspengerutbetalingsoknad-arbeidstaker-prosessering
-        - application: omsorgsdager-melding-prosessering
         - application: omsorgsdager-aleneomsorg-prosessering
         - application: pleiepengesoknad-api
         - application: pleiepengesoknad-prosessering
