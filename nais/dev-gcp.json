@@ -11,7 +11,7 @@
     "objectAge": "3"
   },
   "env": {
-    "VIRUS_SCAN_URL": "http://clamav.clamav/scan",
+    "VIRUS_SCAN_URL": "http://clamav.nais-system/scan",
     "BASE_URL": "https://k9-mellomlagring.dev.intern.nav.no",
     "BUCKET_NAME": "k9-mellomlagring"
   },
