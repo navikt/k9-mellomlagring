@@ -60,6 +60,7 @@ spec:
         - application: pleiepenger-livets-sluttfase-api
         - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-brukerdialog-api
+        - application: k9-brukerdialog-prosessering
         - application: k9-joark
     outbound:
       external:
