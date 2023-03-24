@@ -22,10 +22,13 @@ spec:
 
         - alert: Helsesjekk feiler
           expr: health_check_status{app="{{app}}"} > 0
-          severity: warning
           for: 2m
-          desription: "Sjekk loggene for å se hvorfor helsesjekken feiler.`"
-          action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+          annotations:
+            summary: "Helsesjekk feiler for app \{{ $labels.app }} i namespace \{{ $labels.namespace }}"
+            action: "`kubectl logs \{{ $labels.pod }} -c \{{ $labels.container }} -n \{{ $labels.namespace }}`"
+          labels:
+            namespace: {{namespace}}
+            severity: warning
 
         - alert: Høy andel error i logger
           expr: sum by (app, container, pod, namespace) (floor(increase(logback_events_total{app="{{app}}", level="error"} [3m]))) > 0
@@ -48,19 +51,25 @@ spec:
             severity: warning
 
         - alert: Høy andel HTTP serverfeil (5xx responser)
-          severity: danger
           expr: floor(increase(ktor_http_server_requests_seconds_count{result="failure", status=~"5.*", app="{{app}}"}[3m])) > 1
           for: 1m
-          description: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
-                        Grunn:\n ```\{{ $labels.problem_details }}```\n
-                        Sjekk loggene for å se hvorfor dette feiler."
-          action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+          annotations:
+            summary: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
+                          Grunn:\n ```\{{ $labels.problem_details }}```\n
+                          Sjekk loggene for å se hvorfor dette feiler."
+            action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+          labels:
+            namespace: {{namespace}}
+            severity: danger
 
         - alert: Høy andel HTTP klientfeil (4xx responser)
-          severity: danger
           expr: floor(increase(ktor_http_server_requests_seconds_count{result="failure", status=~"4.*", status!~"404|401|403", app="{{app}}"}[3m])) > 0
           for: 1m
-          description: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
-                        Grunn:\n ```\{{ $labels.problem_details }}```\n
-                        Sjekk loggene for å se hvorfor dette feiler"
-          action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+          annotations:
+            summary: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
+                          Grunn:\n ```\{{ $labels.problem_details }}```\n
+                          Sjekk loggene for å se hvorfor dette feiler"
+            action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+          labels:
+            namespace: {{namespace}}
+            severity: danger

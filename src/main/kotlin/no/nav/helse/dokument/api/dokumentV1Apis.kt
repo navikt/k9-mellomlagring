@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 
 private val logger: Logger = LoggerFactory.getLogger("nav.dokumentApis")
 private const val BASE_PATH = "v1/dokument"
-private const val MAX_DOKUMENT_SIZE = 8 * 1024 * 1024
+private const val MAX_DOKUMENT_SIZE = 10 * 1024 * 1024
 
 private const val CONTENT_PART_NAME = "content"
 private const val TITLE_PART_NAME = "title"
