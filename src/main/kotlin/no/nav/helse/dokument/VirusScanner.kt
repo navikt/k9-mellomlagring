@@ -50,7 +50,7 @@ private class ClamAvGateway(
 ) {
     private companion object {
         private val logger = LoggerFactory.getLogger("nav.ClamAvGateway")
-        private val timeout = Duration.ofSeconds(2).toMillisPart()
+        private val timeout = Duration.ofSeconds(10).toMillisPart()
         private val headers = mapOf(
             Headers.ACCEPT to "application/json",
             Headers.CONTENT_TYPE to "text/plain"
