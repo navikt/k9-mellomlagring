@@ -20,6 +20,7 @@ updates:
       interval: daily
     registries:
       - dusseldorf-ktor
+    open-pull-requests-limit: 15
 
   - package-ecosystem: docker
     directory: "/"
