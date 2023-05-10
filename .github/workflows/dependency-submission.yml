@@ -2,12 +2,12 @@ name: Dependency Submission
 on:
   push:
     branches:
-      - master
+      - main
     paths:
-      - "**/build.gradle.kts"
-      - ".github/workflows/gradle-dependency-submission.yml"
+      - "**.gradle.kts"
+      - ".github/workflows/dependency-submission.yml"
   workflow_dispatch:
-  
+
 jobs:
   scan:
     uses: navikt/sif-gha-workflows/.github/workflows/gradle-dependency-submission.yml@main

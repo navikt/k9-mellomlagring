@@ -10,6 +10,7 @@ on:
       - 'nais/alerterator.yml'
       - '.github/workflows/apply-alerts.yml'
       - '.github/workflows/snyk.yml'
+      - ".github/workflows/dependency-submission.yml"
     branches:
 
 env:
