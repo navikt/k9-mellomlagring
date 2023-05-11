@@ -9,7 +9,7 @@ on:
       - 'CODEOWNERS'
       - 'nais/alerterator.yml'
       - '.github/workflows/apply-alerts.yml'
-      - '.github/workflows/snyk.yml'
+      - '.github/workflows/codeql.yml'
       - ".github/workflows/dependency-submission.yml"
     branches:
 
