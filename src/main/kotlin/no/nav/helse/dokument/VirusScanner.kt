@@ -54,7 +54,10 @@ class VirusScanner(
         )
 
         return when(result) {
-            ScanResult.SCAN_ERROR -> UnHealthy("ClamAvGateway", "Feil ved helsesjekk av ClamAvGateway.")
+            ScanResult.SCAN_ERROR -> {
+                logger.error("ClamAvGateway er ikke tilgjengelig...")
+                UnHealthy("ClamAvGateway", "Feil ved helsesjekk av ClamAvGateway.")
+            }
             else -> Healthy("ClamAvGateway", "OK -> $result")
         }
     }
