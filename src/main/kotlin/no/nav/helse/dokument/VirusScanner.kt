@@ -31,10 +31,12 @@ class VirusScanner(
     private val gateway = ClamAvGateway(url)
 
     suspend fun scan(dokument: Dokument, helsesjekk: Boolean = false): ScanResult {
-        logger.info("Scanner Dokument for virus.")
         val scanResult = gateway.scan(dokument)
-        logger.info("scanResult=$scanResult")
-        if (helsesjekk.not()) virusScannerCounter.labels(scanResult.name).inc()
+        if (helsesjekk.not()) {
+            logger.info("Scanner Dokument for virus.")
+            logger.info("scanResult=$scanResult")
+            virusScannerCounter.labels(scanResult.name).inc()
+        }
         if (ScanResult.INFECTED == scanResult) {
             throw IllegalStateException("Dokumentet inneholder virus.")
         }
