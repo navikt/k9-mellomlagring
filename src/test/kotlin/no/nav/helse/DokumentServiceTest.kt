@@ -23,7 +23,7 @@ class DokumentServiceTest {
         // Setup
         val storage = InMemoryStorage()
         val virusScannerMock = mockk<VirusScanner>()
-        every { runBlocking { virusScannerMock.scan(any()) }}.answers {  }
+        every { runBlocking { virusScannerMock.scan(any()) }}.answers { ScanResult.CLEAN }
 
 
         val eier1 = Eier("12345")
