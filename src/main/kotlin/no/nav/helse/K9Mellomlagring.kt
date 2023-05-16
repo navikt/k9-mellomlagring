@@ -90,13 +90,14 @@ fun Application.k9Mellomlagring() {
 
     install(CallIdRequired)
 
+    val virusScanner: VirusScanner? = getVirusScanner(configuration)
     val dokumentService = DokumentService(
         cryptography = Cryptography(
             encryptionPassphrase = configuration.getEncryptionPassphrase(),
             decryptionPassphrases = configuration.getDecryptionPassphrases()
         ),
         storage = storage,
-        virusScanner = getVirusScanner(configuration)
+        virusScanner = virusScanner
     )
 
     val eierResolver = EierResolver()
@@ -123,15 +124,13 @@ fun Application.k9Mellomlagring() {
 
         DefaultProbeRoutes()
         MetricsRoute()
-        HealthRoute(
-            healthService = HealthService(
-                setOf(
-                    StorageHealthCheck(
-                        storage = storage
-                    )
-                )
+        val healthChecks: MutableSet<HealthCheck> = mutableSetOf(
+            StorageHealthCheck(
+                storage = storage
             )
         )
+        virusScanner?.let { healthChecks.add(it) }
+        HealthRoute(healthService = HealthService(healthChecks))
     }
 
     install(MicrometerMetrics) {

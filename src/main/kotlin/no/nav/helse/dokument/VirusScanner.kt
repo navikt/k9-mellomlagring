@@ -4,6 +4,10 @@ import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
 import com.github.kittinunf.fuel.httpPut
 import io.prometheus.client.Counter
+import no.nav.helse.dusseldorf.ktor.health.HealthCheck
+import no.nav.helse.dusseldorf.ktor.health.Healthy
+import no.nav.helse.dusseldorf.ktor.health.Result
+import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.metrics.Operation
 import org.json.JSONArray
 import org.slf4j.Logger
@@ -14,7 +18,7 @@ import java.time.Duration
 
 class VirusScanner(
     url: URI
-) {
+): HealthCheck {
     private companion object {
         private val logger: Logger = LoggerFactory.getLogger("nav.VirusScanner")
         private val virusScannerCounter = Counter.build()
@@ -31,14 +35,34 @@ class VirusScanner(
         val scanResult = gateway.scan(dokument)
         logger.info("scanResult=$scanResult")
         virusScannerCounter.labels(scanResult.name).inc()
+
         if (ScanResult.INFECTED == scanResult) {
             throw IllegalStateException("Dokumentet inneholder virus.")
         }
         // CLEAN/SCAN_ERROR håndteres som OK
     }
+
+    override suspend fun check(): Result {
+        val result = gateway.scan(
+            dokument = Dokument(
+                title = "",
+                eier = DokumentEier(eiersFødselsnummer = ""),
+                content = ByteArray(0),
+                contentType = ""
+            )
+        )
+
+        return when(result) {
+            ScanResult.SCAN_ERROR -> {
+                logger.error("ClamAvGateway er ikke tilgjengelig...")
+                UnHealthy("ClamAvGateway", "Feil ved helsesjekk av ClamAvGateway.")
+            }
+            else -> Healthy("ClamAvGateway", "OK -> $result")
+        }
+    }
 }
 
-private enum class ScanResult {
+enum class ScanResult {
     CLEAN,
     INFECTED,
     SCAN_ERROR
