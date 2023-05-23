@@ -75,9 +75,9 @@ class GcpStorageBucket(
 
     override fun harHold(key: StorageKey): Boolean {
         val blobId = BlobId.of(bucketName, key.value)
-        val blob: Blob = gcpStorage.get(blobId, GcpStorage.BlobGetOption.fields(GcpStorage.BlobField.TEMPORARY_HOLD))
+        val blob: Blob? = gcpStorage.get(blobId, GcpStorage.BlobGetOption.fields(GcpStorage.BlobField.TEMPORARY_HOLD))
 
-        return when(blob.temporaryHold){
+        return when(blob?.temporaryHold){
             true -> true
             else -> false
         }
