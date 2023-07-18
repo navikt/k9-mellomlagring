@@ -18,7 +18,7 @@ val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
     kotlin("jvm") version "1.8.21"
-    id("org.sonarqube") version "4.0.0.2929"
+    id("org.sonarqube") version "4.3.0.3225"
     jacoco
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
