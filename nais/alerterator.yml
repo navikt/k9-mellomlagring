@@ -57,7 +57,7 @@ spec:
             summary: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
                           Grunn:\n ```\{{ $labels.problem_details }}```\n
                           Sjekk loggene for å se hvorfor dette feiler."
-            action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+            action: "`kubectl logs \{{ $labels.pod }} -n \{{ $labels.namespace }}`"
           labels:
             namespace: {{namespace}}
             severity: danger
@@ -69,7 +69,7 @@ spec:
             summary: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
                           Grunn:\n ```\{{ $labels.problem_details }}```\n
                           Sjekk loggene for å se hvorfor dette feiler"
-            action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
+            action: "`kubectl logs \{{ $labels.pod }} -n \{{ $labels.namespace }}`"
           labels:
             namespace: {{namespace}}
             severity: danger
