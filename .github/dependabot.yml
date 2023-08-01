@@ -21,6 +21,10 @@ updates:
     registries:
       - dusseldorf-ktor
     open-pull-requests-limit: 15
+    groups:
+      maven:
+        patterns:
+          - "*"
 
   - package-ecosystem: docker
     directory: "/"
