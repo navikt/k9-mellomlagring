@@ -39,7 +39,10 @@ dependencies {
     implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
 
     // Lagring
-    implementation("com.google.cloud:google-cloud-storage:$gcpStorageVersion")
+    implementation("com.google.cloud:google-cloud-storage:$gcpStorageVersion") {
+        exclude(group = "com.google.guava", module = "listenablefuture")
+    }
+
     implementation("org.slf4j:jcl-over-slf4j:$slf4jVersion")
 
     // Sjekke dokumenter
