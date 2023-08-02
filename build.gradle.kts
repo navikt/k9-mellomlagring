@@ -65,7 +65,7 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
         credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
+            username = project.findProperty("gpr.user") as String? ?: "k9-mellomlagring"
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
@@ -80,42 +80,45 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+tasks {
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "17"
+    }
 
-tasks.named<KotlinCompile>("compileTestKotlin") {
-    kotlinOptions.jvmTarget = "17"
-}
+    named<KotlinCompile>("compileTestKotlin") {
+        kotlinOptions.jvmTarget = "17"
+    }
 
-tasks.withType<ShadowJar> {
-    archiveBaseName.set("app")
-    archiveClassifier.set("")
-    manifest {
-        attributes(
-            mapOf(
-                "Main-Class" to mainClass
+    withType<ShadowJar> {
+        archiveBaseName.set("app")
+        archiveClassifier.set("")
+        manifest {
+            attributes(
+                mapOf(
+                    "Main-Class" to mainClass
+                )
             )
-        )
+        }
     }
-}
 
-tasks.withType<Wrapper> {
-    gradleVersion = "8.0.2"
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test) // tests are required to run before generating the report
-    reports {
-        xml.required.set(true)
-        csv.required.set(false)
+    withType<Wrapper> {
+        gradleVersion = "8.2.1"
     }
+
+    withType<Test> {
+        useJUnitPlatform()
+        finalizedBy(jacocoTestReport) // report is always generated after tests run
+    }
+
+    jacocoTestReport {
+        dependsOn(test) // tests are required to run before generating the report
+        reports {
+            xml.required.set(true)
+            csv.required.set(false)
+        }
+    }
+
 }
 
 sonarqube {
