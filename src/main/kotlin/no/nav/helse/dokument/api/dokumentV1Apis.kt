@@ -119,8 +119,8 @@ internal fun Route.dokumentV1Apis(
                 call.respond(HttpStatusCode.NoContent)
             }
             false -> {
-                logger.info("Dokument med id ikke funnet: {}", dokumentId)
-                call.respond(HttpStatusCode.NotFound)
+                logger.warn("Dokument med id ikke funnet: {}", dokumentId)
+                call.respond(HttpStatusCode.NoContent)
             }
         }
     }
