@@ -33,6 +33,7 @@ class DokumentValideringTest {
 
         assertTrue(feil.size == 1)
         assertTrue(feil.toString().contains("Mismatch mellom content og contentType"))
+        assertTrue(feil.toString().contains("content=image/png, contentType=application/pdf"))
     }
 
     @Test

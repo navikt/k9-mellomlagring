@@ -38,18 +38,15 @@ class ContentTypeService {
         }
     }
 
-    fun isSupportedContentType(
-        contentType: String
-    ): Boolean {
-        val parsedContentType = ContentType.parseOrNull(contentType) ?: return false
-
-        return when(supportedContentTypes.contains(parsedContentType)){
-            true -> true
-            false -> {
+    fun isSupportedContentType(contentType: String): Boolean {
+        return ContentType.parseOrNull(contentType)?.let { parsedContentType ->
+            if (supportedContentTypes.contains(parsedContentType)) {
+                true
+            } else {
                 logger.error("Ikke støttet contentType: {}. Støttet contentType: {}", parsedContentType, supportedContentTypes)
                 false
             }
-        }
+        } ?: false
     }
 
 
@@ -76,7 +73,7 @@ class ContentTypeService {
     }
 }
 
-private fun Tika.detectOrNull(content: ByteArray): String? {
+fun Tika.detectOrNull(content: ByteArray): String? {
     return try {
         detect(content)
     } catch (cause: Throwable) {

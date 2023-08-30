@@ -13,6 +13,7 @@ import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.eier.EierResolver
 import no.nav.helse.dusseldorf.ktor.auth.idToken
 import no.nav.helse.dusseldorf.ktor.core.*
+import org.apache.tika.Tika
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -51,10 +52,12 @@ internal fun Route.dokumentV1Apis(
                 eier = eier,
                 medHold = true
             )
+
             idToken.issuerIsTokendings() -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier
             )
+
             else -> throw IllegalArgumentException("Ikke støttet issuer ${idToken.issuer()}")
         }
 
@@ -85,10 +88,12 @@ internal fun Route.dokumentV1Apis(
                 logger.error("Dokument med id ikke funnet: {}", dokumentId)
                 call.respondDokumentNotFound(dokumentId)
             }
+
             etterspurtJson -> {
                 logger.info("Dokument(etterspurtJson) med id funnet: {}", dokumentId)
                 call.respond(HttpStatusCode.OK, dokument)
             }
+
             else -> {
                 logger.info("Dokument(etterspurtBytes) med id funnet: {}", dokumentId)
                 call.respondBytes(
@@ -118,6 +123,7 @@ internal fun Route.dokumentV1Apis(
                 logger.info("Dokument med id slettet: {}", dokumentId)
                 call.respond(HttpStatusCode.NoContent)
             }
+
             false -> {
                 logger.warn("Dokument med id ikke funnet: {}", dokumentId)
                 call.respond(HttpStatusCode.NoContent)
@@ -143,6 +149,7 @@ internal fun Route.dokumentV1Apis(
                 logger.info("Fjernet hold på dokument med id: {}", dokumentId)
                 call.respond(HttpStatusCode.OK)
             }
+
             false -> {
                 logger.info("Dokument med id ikke funnet: {}", dokumentId)
                 call.respond(HttpStatusCode.NotFound)
@@ -168,6 +175,7 @@ internal fun Route.dokumentV1Apis(
                 dokumentId = dokumentId,
                 eier = eierResolver.hentEier(idToken, dokumentEier.eiersFødselsnummer)
             )
+
             else -> throw IllegalArgumentException("Ikke støttet issuer ${idToken.issuer()}")
         }
 
@@ -176,6 +184,7 @@ internal fun Route.dokumentV1Apis(
                 logger.info("Dokument med id persistert: {}", dokumentId)
                 call.respond(HttpStatusCode.NoContent)
             }
+
             false -> {
                 logger.info("Dokument med id ikke funnet: {}", dokumentId)
                 call.respond(HttpStatusCode.NotFound)
@@ -184,37 +193,40 @@ internal fun Route.dokumentV1Apis(
     }
 }
 
-fun valider(
-    contentTypeService: ContentTypeService,
-    dokument: DokumentDto
-): Set<Violation> {
+fun valider(contentTypeService: ContentTypeService, dokument: DokumentDto): Set<Violation> {
     logger.trace("Validerer dokumentet")
-    val violations = dokument.valider()
+    val violations = dokument.valider().toMutableSet()
 
-    if (dokument.content != null && dokument.contentType != null) {
-        if (!contentTypeService.isWhatItSeems(dokument.content, dokument.contentType)) {
+    dokument.content?.let { content ->
+        dokument.contentType?.let { contentType ->
+            if (!contentTypeService.isWhatItSeems(content, contentType)) {
+                violations.add(
+                    Violation(
+                        HttpHeaders.ContentType,
+                        ParameterType.HEADER,
+                        "Mismatch mellom content og contentType",
+                        "content=${Tika().detectOrNull(content)}, contentType=$contentType"
+                    )
+                )
+            }
+        }
+    }
+
+    dokument.contentType?.let {
+        if (!contentTypeService.isSupportedContentType(it)) {
             violations.add(
                 Violation(
-                    parameterName = HttpHeaders.ContentType,
-                    reason = "Mismatch mellom content og contentType",
-                    invalidValue = dokument.contentType,
-                    parameterType = ParameterType.HEADER
+                    HttpHeaders.ContentType,
+                    ParameterType.HEADER,
+                    "Støtter ikke dokument med Content-Type '$it'."
                 )
             )
         }
     }
 
-    if (!contentTypeService.isSupportedContentType(contentType = dokument.contentType!!)) {
-        violations.add(
-            Violation(
-                parameterName = HttpHeaders.ContentType,
-                reason = "Støtter ikke dokument med Content-Type '${dokument.contentType}'. ",
-                parameterType = ParameterType.HEADER
-            )
-        )
-    }
-    return violations.toSet()
+    return violations
 }
+
 
 private suspend fun ApplicationCall.hentDokumentFraRequest(): DokumentDto {
     logger.trace("Behandler json request")
@@ -268,50 +280,27 @@ data class DokumentDto(
     val eier: DokumentEier?
 ) {
     fun valider(): MutableList<Violation> {
-        val violations = mutableListOf<Violation>()
-        if (content == null) violations.add(
-            Violation(
-                parameterName = CONTENT_PART_NAME,
-                reason = "Fant ingen 'part' som er en fil.",
-                parameterType = ParameterType.ENTITY
+        return mutableListOf<Violation>().apply {
+            if (content == null) {
+                add(Violation(CONTENT_PART_NAME, ParameterType.ENTITY, "Fant ingen 'part' som er en fil."))
+            } else if (content.size > MAX_DOKUMENT_SIZE) {
+                add(Violation(CONTENT_PART_NAME, ParameterType.ENTITY, "Dokumentet er større en maks tillat 10MB."))
+            }
+
+            contentType ?: add(
+                Violation(
+                    HttpHeaders.ContentType,
+                    ParameterType.ENTITY,
+                    "Ingen Content-Type satt på fil."
+                )
             )
-        )
-        if (content != null && content.size > MAX_DOKUMENT_SIZE) violations.add(
-            Violation(
-                parameterName = CONTENT_PART_NAME,
-                reason = "Dokumentet er større en maks tillat 8MB.",
-                parameterType = ParameterType.ENTITY
-            )
-        )
-        if (contentType == null) violations.add(
-            Violation(
-                parameterName = HttpHeaders.ContentType,
-                reason = "Ingen Content-Type satt på fil.",
-                parameterType = ParameterType.ENTITY
-            )
-        )
-        if (title == null) violations.add(
-            Violation(
-                parameterName = TITLE_PART_NAME,
-                reason = "Fant ingen 'part' som er en form item.",
-                parameterType = ParameterType.ENTITY
-            )
-        )
-        if (eier == null) violations.add(
-            Violation(
-                parameterName = EIER_PART_NAME,
-                reason = "Fant ingen 'part' som er en form item.",
-                parameterType = ParameterType.ENTITY
-            )
-        )
-        if (eier != null && eier.eiersFødselsnummer.isBlank()) violations.add(
-            Violation(
-                parameterName = EIER_PART_NAME,
-                reason = "Fant ingen 'part' som er en form item.",
-                parameterType = ParameterType.ENTITY
-            )
-        )
-        return violations
+            title ?: add(Violation(TITLE_PART_NAME, ParameterType.ENTITY, "Fant ingen 'part' som er en tittel."))
+            eier ?: add(Violation(EIER_PART_NAME, ParameterType.ENTITY, "Fant ingen 'part' som er en eier."))
+
+            if (eier?.eiersFødselsnummer?.isBlank() == true) {
+                add(Violation(EIER_PART_NAME, ParameterType.ENTITY, "Fant ingen 'part' som er en eier."))
+            }
+        }
     }
 
     fun tilDokument(): Dokument {
