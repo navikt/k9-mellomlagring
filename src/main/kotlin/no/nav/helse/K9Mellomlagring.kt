@@ -15,7 +15,6 @@ import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.VirusScanner
 import no.nav.helse.dokument.api.ContentTypeService
-import no.nav.helse.dokument.api.customIdV1Apis
 import no.nav.helse.dokument.api.dokumentV1Apis
 import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.eier.EierResolver
@@ -112,12 +111,6 @@ fun Application.k9Mellomlagring() {
                     eierResolver = eierResolver,
                     contentTypeService = contentTypeService,
                     baseUrl = configuration.getBaseUrl()
-                )
-                customIdV1Apis(
-                    dokumentService = dokumentService,
-                    eierResolver = eierResolver,
-                    contentTypeService = contentTypeService,
-                    støtterExpirationFraRequest = configuration.støtterExpirationFraRequest()
                 )
             }
         }

@@ -51,7 +51,7 @@ internal fun Route.dokumentV1Apis(
                 eier = eier,
                 medHold = true
             )
-            idToken.issuerIsLoginservice() || idToken.issuerIsTokendings() || idToken.issuerIsIDPorten() -> dokumentService.lagreDokument(
+            idToken.issuerIsTokendings() -> dokumentService.lagreDokument(
                 dokument = dokument.tilDokument(),
                 eier = eier
             )
@@ -154,7 +154,7 @@ internal fun Route.dokumentV1Apis(
 
     put("$BASE_PATH/{dokumentId}/persister") {
         val idToken = call.idToken()
-        if (idToken.issuerIsLoginservice() || idToken.issuerIsTokendings()) {
+        if (idToken.issuerIsTokendings()) {
             call.respondForbiddenAccess(idToken.issuer())
             return@put
         }

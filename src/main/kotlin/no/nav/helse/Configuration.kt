@@ -77,11 +77,6 @@ internal data class Configuration(private val config: ApplicationConfig) {
         return StorageOptions.getDefaultInstance().service
     }
 
-    internal fun getS3ExpirationInDays(): Int? =
-        config.getOptionalString("nav.storage.s3.expiration_in_days", secret = false)?.toInt()
-
-    internal fun støtterExpirationFraRequest() = getS3ExpirationInDays() == null
-
     // Virus Scan
     internal fun enableVirusScan(): Boolean =
         config.getRequiredString("nav.virus_scan.enabled", false).equals("true", true)

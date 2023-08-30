@@ -1,11 +1,6 @@
 package no.nav.helse
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import no.nav.helse.dusseldorf.testsupport.jws.LoginService
-import no.nav.helse.dusseldorf.testsupport.jws.Tokendings
-import no.nav.helse.dusseldorf.testsupport.wiremock.getAzureV2WellKnownUrl
-import no.nav.helse.dusseldorf.testsupport.wiremock.getLoginServiceV1WellKnownUrl
-import no.nav.helse.dusseldorf.testsupport.wiremock.getTokendingsWellKnownUrl
 import no.nav.security.mock.oauth2.MockOAuth2Server
 
 internal object TestConfiguration {
@@ -36,13 +31,9 @@ internal object TestConfiguration {
             map["no.nav.security.jwt.issuers.0.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("tokendings")}"
             map["no.nav.security.jwt.issuers.0.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
 
-            map["no.nav.security.jwt.issuers.1.issuer_name"] = "login-service"
-            map["no.nav.security.jwt.issuers.1.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("login-service")}"
+            map["no.nav.security.jwt.issuers.1.issuer_name"] = "azure"
+            map["no.nav.security.jwt.issuers.1.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("azure")}"
             map["no.nav.security.jwt.issuers.1.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
-
-            map["no.nav.security.jwt.issuers.2.issuer_name"] = "azure"
-            map["no.nav.security.jwt.issuers.2.discoveryurl"] = "${mockOAuth2Server.wellKnownUrl("azure")}"
-            map["no.nav.security.jwt.issuers.2.accepted_audience"] = "dev-gcp:dusseldorf:k9-mellomlagring"
         }
 
         map["nav.local_or_test"] = "true"

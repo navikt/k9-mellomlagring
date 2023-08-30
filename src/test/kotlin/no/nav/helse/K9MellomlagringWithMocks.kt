@@ -17,7 +17,6 @@ class K9MellomlagringWithMocks {
             val mockOAuth2Server = MockOAuth2Server()
             val wireMockServer = WireMockBuilder()
                 .withPort(8131)
-                .withLoginServiceSupport()
                 .withAzureSupport()
                 .k9MellomlagringConfiguration()
                 .build()

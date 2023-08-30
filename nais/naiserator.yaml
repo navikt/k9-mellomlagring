@@ -75,4 +75,3 @@ spec:
   {{/each}}
   envFrom:
     - secret: k9-mellomlagring.crypto
-    - configmap: loginservice-idporten

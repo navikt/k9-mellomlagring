@@ -25,8 +25,6 @@ class K9MellomlagringApplicationTest {
         val mockOAuth2Server = MockOAuth2Server().apply { start() }
         val wireMockServer = WireMockBuilder()
             .withAzureSupport()
-            .withNaisStsSupport()
-            .withLoginServiceSupport()
             .withTokendingsSupport()
             .build()
             .stubVirusScan()

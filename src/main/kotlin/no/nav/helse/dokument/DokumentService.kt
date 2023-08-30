@@ -1,7 +1,6 @@
 package no.nav.helse.dokument
 
 import com.fasterxml.jackson.annotation.JsonAlias
-import no.nav.helse.dokument.api.CustomDokumentId
 import no.nav.helse.dokument.crypto.Cryptography
 import no.nav.helse.dokument.eier.Eier
 import no.nav.helse.dokument.storage.Storage
@@ -20,57 +19,6 @@ data class DokumentService(
     init {
         if (virusScanner == null) logger.info("Virusscanning av dokumenter før lagring er skrudd av.")
         else logger.info("Virusscanning av dokumenter blir gjort før lagring.")
-    }
-
-    internal fun hentDokument(
-        customDokumentId: CustomDokumentId,
-        eier: Eier
-    ): Dokument? {
-        // TODO: Støtter ikke rullerende secrets -> https://github.com/navikt/k9-mellomlagring/issues/24
-        logger.info("Henter dokument for CustomDokumentId ${customDokumentId.id}")
-        val dokumentId = generateDokumentId(customDokumentId)
-        val storageKey = generateStorageKey(
-            dokumentId = dokumentId,
-            eier = eier
-        )
-
-        val value = storage.hent(storageKey) ?: return null
-
-        val decrypted = cryptography.decrypt(
-            id = dokumentId.id,
-            encrypted = value.value,
-            eier = eier
-        )
-
-        return DokumentSerDes.deserialize(decrypted)
-    }
-
-    internal suspend fun lagreDokument(
-        customDokumentId: CustomDokumentId,
-        dokument: Dokument,
-        eier: Eier,
-        medHold: Boolean = false
-    ) {
-        virusScanner?.scan(dokument)
-
-        val dokumentId = generateDokumentId(customDokumentId)
-
-        val encrypted = cryptography.encrypt(
-            id = dokumentId.id,
-            plainText = DokumentSerDes.serialize(dokument),
-            eier = eier
-        )
-
-        val storageKey = generateStorageKey(
-            dokumentId = dokumentId,
-            eier = eier
-        )
-        val storageValue = StorageValue(
-            value = encrypted
-        )
-
-        storage.lagre(storageKey, storageValue, medHold)
-
     }
 
     fun hentDokument(
@@ -191,8 +139,6 @@ data class DokumentService(
     }
 
     private fun generateDokumentId(): DokumentId = DokumentId(id = cryptography.id())
-    private fun generateDokumentId(customDokumentId: CustomDokumentId) =
-        DokumentId(id = cryptography.id(id = customDokumentId.id))
 }
 
 data class DokumentId(val id: String)
