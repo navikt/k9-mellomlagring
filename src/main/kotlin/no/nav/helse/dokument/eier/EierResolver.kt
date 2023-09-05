@@ -12,7 +12,7 @@ internal class EierResolver {
     internal fun hentEier(idToken: IdToken, eiersFødselsnummer: String): Eier {
         return when {
             idToken.issuerIsAzure() -> Eier(eiersFødselsnummer)
-            idToken.issuerIsTokendings() -> hentEierFraClaim(idToken, eiersFødselsnummer)
+            idToken.issuerIsTokenx() -> hentEierFraClaim(idToken, eiersFødselsnummer)
             else -> throw IllegalArgumentException("Ikke støttet issuer ${idToken.issuer()}")
         }
     }
