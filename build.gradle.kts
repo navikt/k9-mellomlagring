@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "4.0.10"
-val ktorVersion = "2.3.4"
+val ktorVersion = "2.3.5"
 val slf4jVersion = "2.0.9"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.9.0"
