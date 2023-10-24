@@ -32,7 +32,7 @@ class DokumentValideringTest {
         val feil = valider(contentTypeService, dokument)
 
         assertTrue(feil.size == 1)
-        assertTrue(feil.toString().contains("Filen er egentlig image/png, mens filtypen er application/pdf"))
+        assertTrue(feil.toString().contains("Filen er egentlig image/png, mens contentType er application/pdf"))
     }
 
     @Test
@@ -44,7 +44,7 @@ class DokumentValideringTest {
         val feil = valider(contentTypeService, dokument)
 
         assertTrue(feil.size == 1)
-        assertTrue(feil.toString().contains("Filen er egentlig image/png, mens filtypen er image/jpeg"))
+        assertTrue(feil.toString().contains("Filen er egentlig image/png, mens contentType er image/jpeg"))
     }
 
     @Test

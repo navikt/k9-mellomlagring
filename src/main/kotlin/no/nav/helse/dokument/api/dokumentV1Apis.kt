@@ -204,7 +204,7 @@ fun valider(contentTypeService: ContentTypeService, dokument: DokumentDto): Set<
                     Violation(
                         HttpHeaders.ContentType,
                         ParameterType.HEADER,
-                        "Filen er egentlig ${Tika().detectOrNull(content)}, mens filtypen er $contentType",
+                        "Filen er egentlig ${Tika().detectOrNull(content)}, mens contentType er $contentType",
                         contentType
                     )
                 )
