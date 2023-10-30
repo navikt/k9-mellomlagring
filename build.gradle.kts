@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "4.0.10"
+val dusseldorfKtorVersion = "4.1.0"
 val ktorVersion = "2.3.4"
 val slf4jVersion = "2.0.9"
 val amazonawsVersion = "1.11.790"
