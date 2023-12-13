@@ -1,10 +1,10 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{app}}-alerts
+  name: k9-mellomlagring-alerts
   labels:
-    team: {{team}}
-  namespace: {{namespace}}
+    team: dusseldorf
+  namespace: dusseldorf
 spec:
   groups:
     - name: {{app}}-alerts
