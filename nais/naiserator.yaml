@@ -63,8 +63,8 @@ spec:
     - name: VIRUS_SCAN_URL
       value: http://clamav.nais-system/scan
   {{#each env}}
-     - name: {{@key}}
-       value: "{{this}}"
+    - name: {{@key}}
+      value: "{{this}}"
   {{/each}}
   envFrom:
     - secret: k9-mellomlagring.crypto
