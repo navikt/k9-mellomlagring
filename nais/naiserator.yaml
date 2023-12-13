@@ -49,6 +49,7 @@ spec:
     inbound:
       rules:
         - application: k9-brukerdialog-api
+        - application: k9-brukerdialog-prosessering
         - application: k9-joark
     outbound:
       external:
