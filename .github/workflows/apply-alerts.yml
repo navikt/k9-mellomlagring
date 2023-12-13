@@ -23,6 +23,7 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: nais/alerterator.yml
           VARS: nais/dev-gcp.json
+          APP: k9-mellomlagring
 
   deploy-prod-gcp:
     name: Deploy to prod-gcp
@@ -36,3 +37,4 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: nais/alerterator.yml
           VARS: nais/prod-gcp.json
+          APP: k9-mellomlagring
