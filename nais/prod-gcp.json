@@ -1,8 +1,5 @@
 {
-  "app": "k9-mellomlagring",
   "cluster": "prod-gcp",
-  "namespace": "dusseldorf",
-  "team": "dusseldorf",
   "minReplicas": "2",
   "maxReplicas": "4",
   "azureTenant": "nav.no",
@@ -11,8 +8,6 @@
     "objectAge": "3"
   },
   "env": {
-    "VIRUS_SCAN_URL": "http://clamav.nais-system/scan",
-    "BASE_URL": "https://k9-mellomlagring.intern.nav.no",
     "BUCKET_NAME": "k9-mellomlagring-prod"
   },
   "slack-channel": "sif-alerts",

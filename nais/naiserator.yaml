@@ -1,10 +1,10 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: {{app}}
-  namespace: {{namespace}}
+  name: k9-mellomlagring
+  namespace: dusseldorf
   labels:
-    team: {{team}}
+    team: dusseldorf
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "100M"
 spec:
@@ -48,19 +48,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: omsorgspenger-midlertidig-alene-prosessering
-        - application: omsorgsdager-melding-api
-        - application: omsorgspengesoknad-prosessering
-        - application: k9-ettersending-prosessering
-        - application: omsorgspengerutbetalingsoknad-prosessering
-        - application: omsorgspengerutbetalingsoknad-arbeidstaker-prosessering
-        - application: omsorgsdager-aleneomsorg-prosessering
-        - application: pleiepengesoknad-api
-        - application: pleiepengesoknad-prosessering
-        - application: pleiepenger-livets-sluttfase-api
-        - application: pleiepenger-livets-sluttfase-prosessering
         - application: k9-brukerdialog-api
-        - application: k9-brukerdialog-prosessering
         - application: k9-joark
     outbound:
       external:
@@ -69,6 +57,10 @@ spec:
         - application: clamav
           namespace: nais-system
   env:
+    - name: BASE_URL
+      value: http://k9-mellomlagring
+    - name: VIRUS_SCAN_URL
+      value: http://clamav.nais-system/scan
   {{#each env}}
      - name: {{@key}}
        value: "{{this}}"
