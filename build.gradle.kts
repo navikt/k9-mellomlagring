@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "4.1.4"
 val ktorVersion = "2.3.7"
-val slf4jVersion = "2.0.9"
+val slf4jVersion = "2.0.10"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.9.1"
 val gcpStorageVersion = "2.30.1"
@@ -17,7 +17,7 @@ val mockOauth2ServerVersion = "2.1.0"
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     id("org.sonarqube") version "4.4.1.3373"
     jacoco
     id("com.github.johnrengelman.shadow") version "8.1.1"
