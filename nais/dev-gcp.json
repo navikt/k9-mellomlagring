@@ -1,4 +1,5 @@
 {
+  "app": "k9-mellomlagring",
   "cluster": "dev-gcp",
   "minReplicas": "1",
   "maxReplicas": "2",
