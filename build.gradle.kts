@@ -1,23 +1,23 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "4.1.4"
-val ktorVersion = "2.3.7"
-val slf4jVersion = "2.0.9"
+val dusseldorfKtorVersion = "4.2.1"
+val ktorVersion = "2.3.9"
+val slf4jVersion = "2.0.12"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.9.1"
-val gcpStorageVersion = "2.30.1"
+val gcpStorageVersion = "2.34.0"
 val fuelVersion = "2.3.1"
-val mockKVersion = "1.13.8"
+val mockKVersion = "1.13.10"
 val jsonassertVersion = "1.5.1"
 val systemRulesVersion = "1.19.0"
-val tokenSupportVersion = "3.2.0"
-val mockOauth2ServerVersion = "2.1.0"
+val tokenSupportVersion = "4.1.3"
+val mockOauth2ServerVersion = "2.1.2"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
     id("org.sonarqube") version "4.4.1.3373"
     jacoco
     id("com.github.johnrengelman.shadow") version "8.1.1"
