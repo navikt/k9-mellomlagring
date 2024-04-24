@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "4.2.2"
+val dusseldorfKtorVersion = "4.2.4"
 val ktorVersion = "2.3.10"
 val slf4jVersion = "2.0.13"
 val amazonawsVersion = "1.11.790"
@@ -61,17 +61,17 @@ dependencies {
 }
 
 repositories {
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
-        credentials {
-            username = project.findProperty("gpr.user") as String? ?: "k9-mellomlagring"
-            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: "k9-mellomlagring"
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
         }
-    }
 
-    maven("https://jitpack.io")
-    mavenCentral()
+        maven("https://jitpack.io")
+        mavenCentral()
 }
 
 
@@ -103,7 +103,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.2.1"
+        gradleVersion = "8.5"
     }
 
     withType<Test> {
