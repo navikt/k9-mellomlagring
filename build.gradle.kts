@@ -61,17 +61,15 @@ dependencies {
 }
 
 repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
-            credentials {
-                username = project.findProperty("gpr.user") as String? ?: "k9-mellomlagring"
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-            }
+    mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: "k9-mellomlagring"
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
-
-        maven("https://jitpack.io")
-        mavenCentral()
+    }
 }
 
 
