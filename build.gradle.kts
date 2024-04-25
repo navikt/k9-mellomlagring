@@ -61,7 +61,6 @@ dependencies {
 }
 
 repositories {
-    mavenCentral()
     maven {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/navikt/dusseldorf-ktor")
@@ -70,6 +69,7 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
+    mavenCentral()
 }
 
 
