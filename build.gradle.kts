@@ -2,11 +2,11 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "4.2.4"
-val ktorVersion = "2.3.10"
+val ktorVersion = "2.3.11"
 val slf4jVersion = "2.0.13"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "2.9.2"
-val gcpStorageVersion = "2.37.0"
+val gcpStorageVersion = "2.38.0"
 val fuelVersion = "2.3.1"
 val mockKVersion = "1.13.10"
 val jsonassertVersion = "1.5.1"
