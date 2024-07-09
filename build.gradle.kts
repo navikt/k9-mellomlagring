@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "5.0.1"
+val dusseldorfKtorVersion = "5.0.3"
 val ktorVersion = "2.3.12"
 val slf4jVersion = "2.0.13"
 val amazonawsVersion = "1.11.790"
@@ -18,7 +18,7 @@ val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
     kotlin("jvm") version "2.0.0"
-    id("org.sonarqube") version "5.0.0.4638"
+    id("org.sonarqube") version "5.1.0.4882"
     jacoco
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
