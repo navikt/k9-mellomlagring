@@ -235,6 +235,7 @@ fun StatusPagesConfig.JacksonStatusPages() {
     }
 
     exception { call: ApplicationCall, cause: BadRequestException ->
+        logger.error("Forespørsel feilet.", cause)
         val problemDetails = when (val rootCause = cause.rootCause) {
             is MissingKotlinParameterException -> {
                 val parameter = rootCause.parameter
