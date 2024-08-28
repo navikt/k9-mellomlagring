@@ -8,6 +8,7 @@
     "name": "k9-mellomlagring",
     "objectAge": "3"
   },
+  "observabilityEnabled": "true",
   "env": {
     "BUCKET_NAME": "k9-mellomlagring"
   },
