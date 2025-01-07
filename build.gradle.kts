@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "5.0.15"
+val dusseldorfKtorVersion = "5.0.16"
 val ktorVersion = "2.3.13"
 val slf4jVersion = "2.0.16"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "3.0.0"
 val gcpStorageVersion = "2.46.0"
 val fuelVersion = "2.3.1"
-val mockKVersion = "1.13.13"
+val mockKVersion = "1.13.14"
 val jsonassertVersion = "1.5.3"
 val systemRulesVersion = "1.19.0"
-val tokenSupportVersion = "5.0.13"
+val tokenSupportVersion = "5.0.14"
 val mockOauth2ServerVersion = "2.1.10"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
