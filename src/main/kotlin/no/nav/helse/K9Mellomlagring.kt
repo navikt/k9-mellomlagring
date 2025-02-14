@@ -2,15 +2,19 @@ package no.nav.helse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import io.ktor.serialization.jackson.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.metrics.micrometer.*
-import io.ktor.server.plugins.callid.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.routing.*
+import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.metrics.micrometer.MicrometerMetrics
+import io.ktor.server.plugins.callid.CallId
+import io.ktor.server.plugins.calllogging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.routing.RoutingRoot
 import io.prometheus.client.hotspot.DefaultExports
 import no.nav.helse.dokument.DokumentService
 import no.nav.helse.dokument.VirusScanner
@@ -21,15 +25,28 @@ import no.nav.helse.dokument.eier.EierResolver
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.idToken
-import no.nav.helse.dusseldorf.ktor.core.*
-import no.nav.helse.dusseldorf.ktor.health.*
+import no.nav.helse.dusseldorf.ktor.core.CallIdRequired
+import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
+import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
+import no.nav.helse.dusseldorf.ktor.core.correlationIdAndRequestIdInMdc
+import no.nav.helse.dusseldorf.ktor.core.fromXCorrelationIdHeader
+import no.nav.helse.dusseldorf.ktor.core.id
+import no.nav.helse.dusseldorf.ktor.core.log
+import no.nav.helse.dusseldorf.ktor.core.logProxyProperties
+import no.nav.helse.dusseldorf.ktor.core.logRequests
+import no.nav.helse.dusseldorf.ktor.core.requiresCallId
+import no.nav.helse.dusseldorf.ktor.health.HealthCheck
+import no.nav.helse.dusseldorf.ktor.health.HealthRoute
+import no.nav.helse.dusseldorf.ktor.health.HealthService
+import no.nav.helse.dusseldorf.ktor.health.Healthy
+import no.nav.helse.dusseldorf.ktor.health.Result
+import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
-import no.nav.helse.dusseldorf.ktor.metrics.init
-import no.nav.security.token.support.v2.RequiredClaims
-import no.nav.security.token.support.v2.asIssuerProps
-import no.nav.security.token.support.v2.tokenValidationSupport
+import no.nav.security.token.support.v3.RequiredClaims
+import no.nav.security.token.support.v3.asIssuerProps
+import no.nav.security.token.support.v3.tokenValidationSupport
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -103,7 +120,7 @@ fun Application.k9Mellomlagring() {
 
     val contentTypeService = ContentTypeService()
 
-    install(Routing) {
+    install(RoutingRoot) {
         authenticate(*allIssuers.toTypedArray()) {
             requiresCallId {
                 dokumentV1Apis(
@@ -127,7 +144,7 @@ fun Application.k9Mellomlagring() {
     }
 
     install(MicrometerMetrics) {
-        init(appId)
+       // init(appId) TODO: Fiks før prodsetting. Feiler med Failed to register Collector of type MicrometerCollector: ktor_http_server_requests_active is already in use by another Collector of type MicrometerCollector
     }
 
     install(CallId) {

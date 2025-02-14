@@ -1,8 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "5.0.19"
-val ktorVersion = "2.3.13"
+val dusseldorfKtorVersion = "6.0.1"
+val ktorVersion = "3.1.0"
 val slf4jVersion = "2.0.16"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "3.1.0"
@@ -36,7 +36,7 @@ dependencies {
     }
 
     // Token validation
-    implementation("no.nav.security:token-validation-ktor-v2:$tokenSupportVersion")
+    implementation("no.nav.security:token-validation-ktor-v3:$tokenSupportVersion")
 
     // Lagring
     implementation("com.google.cloud:google-cloud-storage:$gcpStorageVersion") {
