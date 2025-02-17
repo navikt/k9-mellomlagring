@@ -2,7 +2,6 @@ package no.nav.helse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCallPipeline
@@ -26,7 +25,6 @@ import no.nav.helse.dokument.eier.EierResolver
 import no.nav.helse.dokument.storage.Storage
 import no.nav.helse.dusseldorf.ktor.auth.AuthStatusPages
 import no.nav.helse.dusseldorf.ktor.auth.idToken
-import no.nav.helse.dusseldorf.ktor.core.CallIdRequired
 import no.nav.helse.dusseldorf.ktor.core.DefaultProbeRoutes
 import no.nav.helse.dusseldorf.ktor.core.DefaultStatusPages
 import no.nav.helse.dusseldorf.ktor.core.correlationIdAndRequestIdInMdc
@@ -45,7 +43,6 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
-import no.nav.helse.dusseldorf.ktor.metrics.init
 import no.nav.security.token.support.v3.RequiredClaims
 import no.nav.security.token.support.v3.asIssuerProps
 import no.nav.security.token.support.v3.tokenValidationSupport
@@ -105,8 +102,6 @@ fun Application.k9Mellomlagring() {
     }
 
     val storage = configuration.getStorageConfigured()
-
-    install(CallIdRequired)
 
     val virusScanner: VirusScanner? = getVirusScanner(configuration)
     val dokumentService = DokumentService(
@@ -182,7 +177,7 @@ internal fun ObjectMapper.k9MellomlagringConfigured() = dusseldorfConfigured()
     .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
 
 class StorageHealthCheck(
-    private val storage: Storage
+    private val storage: Storage,
 ) : HealthCheck {
 
     private companion object {

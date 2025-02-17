@@ -100,11 +100,7 @@ class K9MellomlagringApplicationTest {
             config = getConfig()
         }
 
-        client.get(endpoint) {
-            headers {
-                append(HttpHeaders.XCorrelationId, UUID.randomUUID().toString())
-            }
-        }.also {
+        client.get(endpoint).also {
             assertEquals(HttpStatusCode.OK, it.status)
         }
     }
