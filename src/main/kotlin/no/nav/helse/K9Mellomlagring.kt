@@ -43,6 +43,7 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
+import no.nav.helse.dusseldorf.ktor.metrics.init
 import no.nav.security.token.support.v3.RequiredClaims
 import no.nav.security.token.support.v3.asIssuerProps
 import no.nav.security.token.support.v3.tokenValidationSupport
@@ -141,8 +142,7 @@ fun Application.k9Mellomlagring() {
     }
 
     install(MicrometerMetrics) {
-        //TODO: Fiks før prodsetting. Feiler med Failed to register Collector of type MicrometerCollector: ktor_http_server_requests_active is already in use by another Collector of type MicrometerCollector
-        //init(appId)
+        init(appId)
     }
 
     install(CallId) {
