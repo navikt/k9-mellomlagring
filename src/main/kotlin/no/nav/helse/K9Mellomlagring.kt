@@ -2,6 +2,7 @@ package no.nav.helse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCallPipeline
@@ -44,6 +45,7 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
+import no.nav.helse.dusseldorf.ktor.metrics.init
 import no.nav.security.token.support.v3.RequiredClaims
 import no.nav.security.token.support.v3.asIssuerProps
 import no.nav.security.token.support.v3.tokenValidationSupport
@@ -144,11 +146,13 @@ fun Application.k9Mellomlagring() {
     }
 
     install(MicrometerMetrics) {
-       // init(appId) TODO: Fiks før prodsetting. Feiler med Failed to register Collector of type MicrometerCollector: ktor_http_server_requests_active is already in use by another Collector of type MicrometerCollector
+        //TODO: Fiks før prodsetting. Feiler med Failed to register Collector of type MicrometerCollector: ktor_http_server_requests_active is already in use by another Collector of type MicrometerCollector
+        //init(appId)
     }
 
     install(CallId) {
-        fromXCorrelationIdHeader()
+        //fromXCorrelationIdHeader()
+        retrieveFromHeader(HttpHeaders.XCorrelationId)
     }
 
     intercept(ApplicationCallPipeline.Monitoring) {
