@@ -106,8 +106,6 @@ fun Application.k9Mellomlagring() {
 
     val storage = configuration.getStorageConfigured()
 
-    install(CallIdRequired)
-
     val virusScanner: VirusScanner? = getVirusScanner(configuration)
     val dokumentService = DokumentService(
         cryptography = Cryptography(
@@ -153,6 +151,7 @@ fun Application.k9Mellomlagring() {
     install(CallId) {
         //fromXCorrelationIdHeader()
         retrieveFromHeader(HttpHeaders.XCorrelationId)
+        verify { callId: String -> callId.isNotEmpty() }
     }
 
     intercept(ApplicationCallPipeline.Monitoring) {
