@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val dusseldorfKtorVersion = "6.1.1"
 val ktorVersion = "3.1.0"
-val slf4jVersion = "2.0.16"
+val slf4jVersion = "2.0.17"
 val amazonawsVersion = "1.11.790"
 val tikaVersion = "3.1.0"
 val gcpStorageVersion = "2.48.2"
