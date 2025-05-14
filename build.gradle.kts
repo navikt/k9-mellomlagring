@@ -11,13 +11,13 @@ val fuelVersion = "2.3.1"
 val mockKVersion = "1.14.2"
 val jsonassertVersion = "1.5.3"
 val systemRulesVersion = "1.19.0"
-val tokenSupportVersion = "5.0.25"
+val tokenSupportVersion = "5.0.27"
 val mockOauth2ServerVersion = "2.1.11"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.1.21"
     id("org.sonarqube") version "6.1.0.5360"
     jacoco
     id("com.github.johnrengelman.shadow") version "8.1.1"
