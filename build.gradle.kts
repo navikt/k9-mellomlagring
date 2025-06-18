@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val dusseldorfKtorVersion = "6.1.4"
+val dusseldorfKtorVersion = "7.0.0"
 val ktorVersion = "3.1.0"
 val slf4jVersion = "2.0.17"
 val amazonawsVersion = "1.11.790"
@@ -12,7 +12,7 @@ val mockKVersion = "1.14.2"
 val jsonassertVersion = "1.5.3"
 val systemRulesVersion = "1.19.0"
 val tokenSupportVersion = "5.0.29"
-val mockOauth2ServerVersion = "2.2.0"
+val mockOauth2ServerVersion = "2.2.1"
 
 val mainClass = "no.nav.helse.K9MellomlagringKt"
 
