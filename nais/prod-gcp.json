@@ -4,10 +4,6 @@
   "minReplicas": "2",
   "maxReplicas": "4",
   "azureTenant": "nav.no",
-  "bucket": {
-    "name": "k9-mellomlagring-prod",
-    "objectAge": "3"
-  },
   "observabilityEnabled": "true",
   "env": {
     "BUCKET_NAME": "k9-mellomlagring-prod"
