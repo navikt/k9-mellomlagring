@@ -19,10 +19,6 @@ class GcpStorageBucket(
         private val logger: Logger = LoggerFactory.getLogger(GcpStorageBucket::class.java)
     }
 
-    init {
-        ensureBucketExists()
-    }
-
     override fun hent(key: StorageKey): StorageValue? {
         return try {
             val blob = gcpStorage.get(BlobId.of(bucketName, key.value)) ?: return null
