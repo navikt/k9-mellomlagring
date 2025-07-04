@@ -48,11 +48,6 @@ spec:
     application:
       enabled: true
       tenant: {{azureTenant}}
-  gcp:
-    buckets:
-      - name: {{ bucket.name }}
-        lifecycleCondition:
-          age: {{ bucket.objectAge }}
   accessPolicy:
     inbound:
       rules:
